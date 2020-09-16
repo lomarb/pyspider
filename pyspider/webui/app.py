@@ -61,7 +61,7 @@ class QuitableFlask(Flask):
             logger.warning('WebDav interface not enabled: %r', e)
             dav_app = None
         if dav_app:
-            from werkzeug.wsgi import DispatcherMiddleware
+            from werkzeug.middleware.dispatcher import DispatcherMiddleware
             application = DispatcherMiddleware(application, {
                 '/dav': dav_app
             })
