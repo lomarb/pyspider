@@ -7,70 +7,79 @@
 
 import os
 import re
-import six
 import glob
+import time
 import logging
+import json
 
 from pyspider.database.base.projectdb import ProjectDB as BaseProjectDB
 
-
 class ProjectDB(BaseProjectDB):
-    """ProjectDB loading scripts from local file."""
+    """ProjectDB loading scripts from local JSON files."""
 
-    def __init__(self, files):
-        self.files = files
+    def __init__(self, path):
+        self.path = path[0]
         self.projects = {}
         self.load_scripts()
 
     def load_scripts(self):
         project_names = set(self.projects.keys())
-        for path in self.files:
-            for filename in glob.glob(path):
-                name = os.path.splitext(os.path.basename(filename))[0]
-                if name in project_names:
-                    project_names.remove(name)
-                updatetime = os.path.getmtime(filename)
-                if name not in self.projects or updatetime > self.projects[name]['updatetime']:
-                    project = self._build_project(filename)
-                    if not project:
-                        continue
-                    self.projects[project['name']] = project
-
+        for filename in glob.glob(os.path.join(self.path, "*.json")):
+            name = os.path.basename(filename)[:-5]
+            if name in project_names:
+                project_names.remove(name)
+            updatetime = os.path.getmtime(filename)
+            if name not in self.projects or (self.projects[name].get("updatetime", None) and updatetime > self.projects[name]['updatetime']):
+                with open(filename) as f:
+                    project = json.load(f)
+                if not project:
+                    continue
+                project["updatetime"] = time.time()
+                with open(os.path.join(self.path, name + ".py")) as f:
+                    project["script"] = f.read()
+                self.projects[name] = project
         for name in project_names:
             del self.projects[name]
 
-    rate_re = re.compile(r'^\s*#\s*rate.*?(\d+(\.\d+)?)', re.I | re.M)
-    burst_re = re.compile(r'^\s*#\s*burst.*?(\d+(\.\d+)?)', re.I | re.M)
+    def drop(self, name):
+        if name in self.projects:
+            del self.projects[name]
+        fn = os.path.join(self.path, name + ".json")
+        if os.path.exists(fn):
+            os.unlink(fn)
+        fn = os.path.join(self.path, name + ".py")
+        if os.path.exists(fn):
+            os.unlink(fn)
 
-    def _build_project(self, filename):
-        try:
-            with open(filename) as fp:
-                script = fp.read()
-            m = self.rate_re.search(script)
-            if m:
-                rate = float(m.group(1))
-            else:
-                rate = 1
-
-            m = self.burst_re.search(script)
-            if m:
-                burst = float(m.group(1))
-            else:
-                burst = 3
-
-            return {
-                'name': os.path.splitext(os.path.basename(filename))[0],
-                'group': None,
-                'status': 'RUNNING',
-                'script': script,
-                'comments': None,
-                'rate': rate,
-                'burst': burst,
-                'updatetime': os.path.getmtime(filename),
-            }
-        except OSError as e:
-            logging.error('loading project script error: %s', e)
+    def insert(self, name, obj={}):
+        if name in self.projects:
+            logging.warning(f"Project already exists: {name}")
             return None
+        self.projects[name] = obj
+        self.projects[name]["updatetime"] = time.time()
+        self.projects[name]["name"] = name
+        self.projects[name]["group"] = obj.get("group", "generic")
+        with open(os.path.join(self.path, name + ".py"), "w") as outfile:
+            outfile.write(obj["script"])
+        metadata = {k: v for k, v in self.projects[name].items() if k != "script"}
+        with open(os.path.join(self.path, name + ".json"), "w") as outfile:
+            outfile.write(json.dumps(metadata, indent=4, ensure_ascii=False))
+        return self.projects[name]
+
+    def update(self, name, obj={}, **kwargs):
+        obj = dict(obj)
+        obj.update(kwargs)
+        obj["updatetime"] = time.time()
+        if name not in self.projects:
+            logging.warning(f"Cannot update: project {name} does not exist.")
+            return None
+        self.projects[name].update(obj)
+        metadata = {k: v for k, v in self.projects[name].items() if k != "script"}
+        with open(os.path.join(self.path, name + ".json"), "w") as outfile:
+            outfile.write(json.dumps(metadata))
+        with open(os.path.join(self.path, name + ".py"), "w") as outfile:
+            outfile.write(self.projects[name]["script"])
+        return self.projects[name]
 
     def get_all(self, fields=None):
         for projectname in self.projects:
@@ -90,6 +99,9 @@ class ProjectDB(BaseProjectDB):
 
     def check_update(self, timestamp, fields=None):
         self.load_scripts()
-        for projectname, project in six.iteritems(self.projects):
-            if project['updatetime'] > timestamp:
+        for projectname in self.projects:
+            if self.projects[projectname]['updatetime'] > timestamp:
                 yield self.get(projectname, fields)
+
+    def verify_project_name(self, name):
+        return len(name) <= 64
