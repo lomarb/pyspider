@@ -30,7 +30,7 @@ services:
       - pyspider
     volumes:
       - ./config.json:/opt/pyspider/config.json
-      - ./projects:/opt/pyspider/projects
+      - ./data/projects:/opt/pyspider/projects
     command: -c config.json phantomjs
     restart: unless-stopped
   result:
@@ -40,7 +40,7 @@ services:
       - pyspider
     volumes:
       - ./config.json:/opt/pyspider/config.json
-      - ./projects:/opt/pyspider/projects
+      - ./data/projects:/opt/pyspider/projects
     command: -c config.json result_worker
     restart: unless-stopped # Sometimes we'll get a connection refused error because couchdb has yet to fully start
     links:
@@ -52,7 +52,7 @@ services:
       - pyspider
     volumes:
       - ./config.json:/opt/pyspider/config.json
-      - ./projects:/opt/pyspider/projects
+      - ./data/projects:/opt/pyspider/projects
     command: -c config.json processor
     restart: unless-stopped
     links:
@@ -64,7 +64,7 @@ services:
       - pyspider
     volumes:
       - ./config.json:/opt/pyspider/config.json
-      - ./projects:/opt/pyspider/projects
+      - ./data/projects:/opt/pyspider/projects
     command : -c config.json fetcher
     restart: unless-stopped
   scheduler:
@@ -74,7 +74,7 @@ services:
       - pyspider
     volumes:
       - ./config.json:/opt/pyspider/config.json
-      - ./projects:/opt/pyspider/projects
+      - ./data/projects:/opt/pyspider/projects
     command: -c config.json scheduler
     restart: unless-stopped
     links:
@@ -88,7 +88,7 @@ services:
       - pyspider
     volumes:
       - ./config.json:/opt/pyspider/config.json
-      - ./projects:/opt/pyspider/projects
+      - ./data/projects:/opt/pyspider/projects
     command: -c config.json webui
     restart: unless-stopped
     links:
