@@ -68,8 +68,8 @@ class ScriptResource(DAVNonCollection):
                     'name': self.project_name,
                     'script': '',
                     'status': 'TODO',
-                    'rate': self.app.config.get('max_rate', 1),
-                    'burst': self.app.config.get('max_burst', 3),
+                    'rate': self.app.config.get('max_rate', 0.1),
+                    'burst': self.app.config.get('max_burst', 1),
                     'updatetime': time.time(),
                 }
             else:
