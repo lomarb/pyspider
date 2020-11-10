@@ -36,7 +36,7 @@ class ProjectDB(BaseProjectDB):
                     continue
                 project["updatetime"] = time.time()
                 with open(os.path.join(self.path, name + ".py")) as f:
-                    project["script"] = f.read()
+                    project["script"] = f.read() or "\n"
                 self.projects[name] = project
         for name in project_names:
             del self.projects[name]
@@ -60,7 +60,7 @@ class ProjectDB(BaseProjectDB):
         self.projects[name]["name"] = name
         self.projects[name]["group"] = obj.get("group", "generic")
         with open(os.path.join(self.path, name + ".py"), "w") as outfile:
-            outfile.write(obj["script"])
+            outfile.write(obj["script"] or "\n")
         metadata = {k: v for k, v in self.projects[name].items() if k != "script"}
         with open(os.path.join(self.path, name + ".json"), "w") as outfile:
             outfile.write(json.dumps(metadata, indent=4, ensure_ascii=False))
@@ -78,7 +78,7 @@ class ProjectDB(BaseProjectDB):
         with open(os.path.join(self.path, name + ".json"), "w") as outfile:
             outfile.write(json.dumps(metadata))
         with open(os.path.join(self.path, name + ".py"), "w") as outfile:
-            outfile.write(self.projects[name]["script"])
+            outfile.write(self.projects[name]["script"] or "\n")
         return self.projects[name]
 
     def get_all(self, fields=None):
