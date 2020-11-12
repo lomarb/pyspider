@@ -16,7 +16,11 @@ from tblib import Traceback
 from pyquery import PyQuery
 from requests.structures import CaseInsensitiveDict
 from requests import HTTPError
-from pyspider.libs import utils
+from pyspider.libs import utils, justext
+from bs4 import BeautifulSoup
+
+# robust XML parsing
+# https://stackoverflow.com/questions/4972210/escape-unescaped-characters-in-xml-with-python
 
 
 class Response(object):
@@ -29,7 +33,7 @@ class Response(object):
         self.url = url
         self.orig_url = orig_url
         self.headers = headers
-        self.content = content
+        self.content = BeautifulSoup(content, "html5lib").prettify()
         self.cookies = cookies
         self.error = error
         self.traceback = traceback
@@ -124,6 +128,10 @@ class Response(object):
 
         self._text = content
         return content
+
+    @property
+    def bte(self):
+        return justext.bte(self.content)
 
     @property
     def json(self):
