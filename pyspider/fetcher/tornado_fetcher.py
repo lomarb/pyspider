@@ -311,6 +311,8 @@ class Fetcher(object):
                 content = content.decode('utf8', 'ignore')
             except UnicodeDecodeError:
                 content = ''
+            except AttributeError:
+                content = ''
 
             robot_txt.parse(content.splitlines())
             self.robots_txt_cache[domain] = robot_txt
