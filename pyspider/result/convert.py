@@ -1,7 +1,6 @@
 import time
 import json
 import re
-import hashlib
 
 from datetime import datetime
 from enum import Enum
@@ -82,6 +81,7 @@ def validate_title(result: dict) -> str:
 
 
 def validate_body(result: dict) -> Optional[str]:
+    # TODO: monitor empty body
     b = result.get("body", None)
     if b is None:
         raise ValueError("Missing body in response")
@@ -132,12 +132,6 @@ def validate_jurisdiction_municipality(result: dict) -> Optional[str]:
     return jurm.strip()
 
 
-def url2id(url: str) -> str:
-    h = hashlib.sha1()
-    h.update(bytes(url, encoding="utf-8"))
-    return h.hexdigest().upper()
-
-
 def validate_response(res: dict) -> dict:
     "Used as a decorator in scraper scripts. Ensures the proper JSON."
 
@@ -163,7 +157,7 @@ def convert(task: dict, result: dict) -> str:
     return json.dumps(
         {
             **result,
-            "id": url2id(task["url"]),
+            "id": task["taskid"],
             "url": task["url"],
             "version": task["timestamp"],
             "crawl_time": task["timestamp"],

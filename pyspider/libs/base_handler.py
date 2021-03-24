@@ -21,7 +21,7 @@ from pyspider.libs.ListIO import ListO
 from pyspider.libs.response import rebuild_response
 from pyspider.libs.pprint import pprint
 from pyspider.processor import ProcessorResult
-from pyspider.libs.convert import validate_response
+from pyspider.result.convert import validate_response
 
 
 def catch_status_code_error(func):
@@ -44,12 +44,6 @@ def not_send_status(func):
         self._extinfo['not_send_status'] = True
         function = func.__get__(self, self.__class__)
         return self._run_func(function, response, task)
-    return wrapper
-
-
-def validate(func):
-    def wrapper(*arg):
-        return validate_response(func(*arg))
     return wrapper
 
 
@@ -162,7 +156,8 @@ class BaseHandler(object):
                 ret = function(*arguments[:len(args) - 1])
         else:
             ret = function(*arguments[:len(args) - 1])
-        return ret
+
+        return validate_response(ret)
 
     def _run_task(self, task, response):
         """
