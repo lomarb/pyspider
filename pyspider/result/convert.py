@@ -2,9 +2,17 @@ import time
 import json
 import re
 
-from datetime import datetime
-from enum import Enum
 from typing import NamedTuple, Optional, Callable, Any, Dict
+from dateutil.parser import parse
+from dateutil.parser._parser import ParserError
+
+
+def parsedate(txt: str) -> Optional[float]:
+    try:
+        return parse(txt, fuzzy=True).timestamp()
+    except ParserError:
+        return None
+    return None
 
 
 # https://github.com/merlon/merlon/blob/master/protos/messages/src/cloud/article.proto
@@ -66,10 +74,19 @@ def validate_importance(result: dict) -> str:
 
 def validate_published(result: dict) -> float:
     pub = result.get("published", None)
+    now = time.time() #  timezone?
+    # TODO: monitor fallback to crawl timestamp
     if pub is None:
-        # TODO: monitor fallback to crawl timestamp
-        return time.time()  # TODO: timezones?
-    elif type(pub) == type(1.0):
+        return now
+    elif type(pub) == str:
+        guess = parsedate(pub)
+        if guess is None:
+            return now
+        elif type(guess) == float:
+            return guess
+        else:
+            return now
+    elif type(pub) == float and pub > 0.0:
         return pub
     else:
         raise ValueError("Published time should be a timestamp (float)")

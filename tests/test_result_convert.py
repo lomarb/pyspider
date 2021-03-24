@@ -50,6 +50,20 @@ class TestValidate(unittest.TestCase):
         self.assertEqual(o["source_type"], "UNDEFINED")
         self.assertEqual(o["document_type"], "UNKNOWN")
 
+    def test_parse_date_fallback(self):
+        o = validate_response({
+            **test_json,
+            "published": "in 2020/13/32",
+        })
+        self.assertEqual(type(o["published"]), float)
+
+    def test_parse_date(self):
+        o = validate_response({
+            **test_json,
+            "published": "hahaha 2011/03/11 and now something else",
+        })
+        self.assertEqual(1299801600.0, o["published"])
+
 
 class TestConvert(unittest.TestCase):
 

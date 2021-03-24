@@ -156,8 +156,7 @@ class BaseHandler(object):
                 ret = function(*arguments[:len(args) - 1])
         else:
             ret = function(*arguments[:len(args) - 1])
-
-        return validate_response(ret)
+        return ret
 
     def _run_task(self, task, response):
         """
@@ -416,6 +415,8 @@ class BaseHandler(object):
         if not result:
             return
         assert self.task, "on_result can't outside a callback."
+        result = validate_response(result)
+
         if self.is_debugger():
             pprint(result)
         if self.__env__.get('result_queue'):
