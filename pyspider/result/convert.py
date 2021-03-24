@@ -138,27 +138,23 @@ def url2id(url: str) -> str:
     return h.hexdigest().upper()
 
 
-def validate(func) -> Callable[..., Dict[str, Any]]:
+def validate_response(res: dict) -> dict:
     "Used as a decorator in scraper scripts. Ensures the proper JSON."
 
-    def wrapper(*arg):
-        res = func(*arg)
-        return {
-            "published": validate_published(res),
-            "title": validate_title(res),
-            "body": validate_body(res),
-            "institution_name": validate_institution_name(res),
-            "short_institution_name": validate_short_institution_name(res),
-            "source_type": validate_source_type(res),
-            "document_type": validate_document_type(res),
-            "expected_language_code": validate_lang(res),
-            "jurisdiction": validate_jurisdiction(res),
-            "jurisdiction_state": validate_jurisdiction_state(res),
-            "jurisdiction_municipality": validate_jurisdiction_municipality(res),
-            "importance": validate_importance(res),
-        }
-
-    return wrapper
+    return {
+        "published": validate_published(res),
+        "title": validate_title(res),
+        "body": validate_body(res),
+        "institution_name": validate_institution_name(res),
+        "short_institution_name": validate_short_institution_name(res),
+        "source_type": validate_source_type(res),
+        "document_type": validate_document_type(res),
+        "expected_language_code": validate_lang(res),
+        "jurisdiction": validate_jurisdiction(res),
+        "jurisdiction_state": validate_jurisdiction_state(res),
+        "jurisdiction_municipality": validate_jurisdiction_municipality(res),
+        "importance": validate_importance(res),
+    }
 
 
 def convert(task: dict, result: dict) -> str:
