@@ -16,7 +16,7 @@ from six import add_metaclass, iteritems
 from pyspider.libs.url import (
     quote_chinese, _build_url, _encode_params,
     _encode_multipart_formdata, curl_to_arguments)
-from pyspider.libs.utils import md5string, timeout
+from pyspider.libs.utils import timeout, sha1string
 from pyspider.libs.ListIO import ListO
 from pyspider.libs.response import rebuild_response
 from pyspider.libs.pprint import pprint
@@ -342,7 +342,7 @@ class BaseHandler(object):
 
     def get_taskid(self, task):
         '''Generate taskid by information of task md5(url) by default, override me'''
-        return md5string(task['url'])
+        return sha1string(task['url'])
 
     # apis
     def crawl(self, url, **kwargs):

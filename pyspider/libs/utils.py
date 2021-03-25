@@ -18,6 +18,7 @@ import six
 from six import iteritems
 
 md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
+sha1string = lambda x: hashlib.sha1(utf8(x)).hexdigest().upper()
 
 
 class ReadOnlyDict(dict):

@@ -177,7 +177,7 @@ class Processor(object):
         for project, msg, url in ret.messages:
             try:
                 self.on_task({
-                    'taskid': utils.md5string(url),
+                    'taskid': utils.sha1string(url),
                     'project': project,
                     'url': url,
                     'process': {

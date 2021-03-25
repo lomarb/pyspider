@@ -16,7 +16,7 @@ from pyspider.scheduler import ThreadBaseScheduler as Scheduler
 from pyspider.fetcher.tornado_fetcher import Fetcher
 from pyspider.processor import Processor
 from pyspider.result import ResultWorker
-from pyspider.libs.utils import md5string
+from pyspider.libs.utils import sha1string
 
 
 def bench_test_taskdb(taskdb):
@@ -64,7 +64,7 @@ def bench_test_taskdb(taskdb):
         start_time = time.time()
         for i in range(n):
             task['url'] = 'http://bench.pyspider.org/?l=%d' % (i + start)
-            task['taskid'] = md5string(task['url'])
+            task['taskid'] = sha1string(task['url'])
             task['track'] = {}
             taskdb.insert(task['project'], task['taskid'], task)
         end_time = time.time()
@@ -77,7 +77,7 @@ def bench_test_taskdb(taskdb):
         start_time = time.time()
         for i in range(n):
             task['url'] = 'http://bench.pyspider.org/?l=%d' % (i + start)
-            task['taskid'] = md5string(task['url'])
+            task['taskid'] = sha1string(task['url'])
             task['track'] = track
             taskdb.update(task['project'], task['taskid'], task)
         end_time = time.time()
@@ -105,7 +105,7 @@ def bench_test_taskdb(taskdb):
         start_time = time.time()
         for i in range_n:
             task['url'] = 'http://bench.pyspider.org/?l=%d' % (i + start)
-            task['taskid'] = md5string(task['url'])
+            task['taskid'] = sha1string(task['url'])
             task['track'] = track
             taskdb.get_task(task['project'], task['taskid'], fields=fields)
         end_time = time.time()
@@ -147,7 +147,7 @@ def bench_test_message_queue(queue):
         start_time = time.time()
         for i in range(n):
             task['url'] = 'http://bench.pyspider.org/?l=%d' % i
-            task['taskid'] = md5string(task['url'])
+            task['taskid'] = sha1string(task['url'])
             queue.put(task, block=True, timeout=1)
         end_time = time.time()
         cost_time = end_time - start_time
