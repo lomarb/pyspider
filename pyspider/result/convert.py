@@ -4,7 +4,7 @@ import re
 
 from typing import NamedTuple, Optional, Callable, Any, Dict
 from dateutil.parser import parse
-from dateutil.parser._parser import ParserError
+from dateutil.parser._parser import ParserError  # type: ignore
 
 
 def parsedate(txt: str) -> Optional[float]:
@@ -74,7 +74,7 @@ def validate_importance(result: dict) -> str:
 
 def validate_published(result: dict) -> float:
     pub = result.get("published", None)
-    now = time.time() #  timezone?
+    now = time.time()  #  timezone?
     # TODO: monitor fallback to crawl timestamp
     if pub is None:
         return now
@@ -168,15 +168,13 @@ def validate_response(res: dict) -> dict:
     }
 
 
-def convert(task: dict, result: dict) -> str:
+def convert(task: dict, result: dict, timestamp: float) -> dict:
     "Takes result and prepares JSON to be stored in GCS"
 
-    return json.dumps(
-        {
-            **result,
-            "id": task["taskid"],
-            "url": task["url"],
-            "version": task["timestamp"],
-            "crawl_time": task["timestamp"],
-        }
-    )
+    return {
+        **result,
+        "id": task["taskid"],
+        "url": task["url"],
+        "version": timestamp,
+        "crawl_time": timestamp,
+    }

@@ -17,15 +17,10 @@ test_json = {
     "importance": "LOW",
 }
 
-test_task = {
-    "url": "url",
-    "timestamp": 123.4,
-    "taskid": "abc",
-}
+test_task = {"url": "url", "timestamp": 123.4, "taskid": "abc"}
 
 
 class TestValidate(unittest.TestCase):
-
     def test_empty_response(self):
         self.assertRaises(ValueError, lambda: validate_response({}))
 
@@ -51,26 +46,21 @@ class TestValidate(unittest.TestCase):
         self.assertEqual(o["document_type"], "UNKNOWN")
 
     def test_parse_date_fallback(self):
-        o = validate_response({
-            **test_json,
-            "published": "in 2020/13/32",
-        })
+        o = validate_response({**test_json, "published": "in 2020/13/32"})
         self.assertEqual(type(o["published"]), float)
 
     def test_parse_date(self):
-        o = validate_response({
-            **test_json,
-            "published": "hahaha 2011/03/11 and now something else",
-        })
+        o = validate_response(
+            {**test_json, "published": "hahaha 2011/03/11 and now something else"}
+        )
         self.assertEqual(1299801600.0, o["published"])
 
 
 class TestConvert(unittest.TestCase):
-
     def test_convert(self):
         result = dict(test_json)
         task = dict(test_task)
-        o = json.loads(convert(task, validate_response(result)))
+        o = convert(task, validate_response(result))
         self.assertEqual(o["url"], task["url"])
         self.assertEqual(o["version"], o["crawl_time"])
 

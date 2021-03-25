@@ -8,44 +8,65 @@
 import time
 import json
 import logging
+from datetime import datetime, timezone
 from six.moves import queue as Queue
+
 logger = logging.getLogger("result")
 
 
-class ResultWorker(object):
+from pyspider.result.gcs import GcsClient
+from pyspider.result.convert import convert
 
+
+class ResultWorker(object):
     """
     do with result
     override this if needed.
     """
 
-    def __init__(self, resultdb, inqueue):
+    def __init__(self, resultdb, inqueue, gcs_bucket):
         self.resultdb = resultdb
         self.inqueue = inqueue
         self._quit = False
+        self.gcs_client = GcsClient(gcs_bucket)
 
     def on_result(self, task, result):
-        '''Called every result'''
+        """Called every result"""
         if not result:
             return
-        if 'taskid' in task and 'project' in task and 'url' in task:
-            logger.info('result %s:%s %s -> %.30r' % (
-                task['project'], task['taskid'], task['url'], result))
+
+        if "taskid" in task and "project" in task and "url" in task:
+            logger.info(
+                "result %s:%s %s -> %.30r"
+                % (task["project"], task["taskid"], task["url"], result)
+            )
+
+            # save into GCS
+            dt = datetime.now(timezone.utc)
+            id = task["taskid"]
+            try:
+                self.gcs_client.upload_json(
+                    json.dumps(convert(task, result, dt.timestamp())),
+                    f"{dt.year}/{dt.month:02}/{dt.day:02}/{dt.hour:02}/{id}.json",
+                )
+            except Exception as e:
+                logger.error(repr(e))
+
             return self.resultdb.save(
-                project=task['project'],
-                taskid=task['taskid'],
-                url=task['url'],
-                result=result
+                project=task["project"],
+                taskid=task["taskid"],
+                url=task["url"],
+                result=result,
             )
         else:
-            logger.warning('result UNKNOW -> %.30r' % result)
+            logger.warning("result UNKNOW -> %.30r" % result)
             return
 
     def quit(self):
         self._quit = True
 
     def run(self):
-        '''Run loop'''
+        """Run loop"""
         logger.info("result_worker starting...")
 
         while not self._quit:
@@ -67,21 +88,28 @@ class ResultWorker(object):
 
 
 class OneResultWorker(ResultWorker):
-    '''Result Worker for one mode, write results to stdout'''
+    """Result Worker for one mode, write results to stdout"""
+
     def on_result(self, task, result):
-        '''Called every result'''
+        """Called every result"""
         if not result:
             return
-        if 'taskid' in task and 'project' in task and 'url' in task:
-            logger.info('result %s:%s %s -> %.30r' % (
-                task['project'], task['taskid'], task['url'], result))
-            print(json.dumps({
-                'taskid': task['taskid'],
-                'project': task['project'],
-                'url': task['url'],
-                'result': result,
-                'updatetime': time.time()
-            }))
+        if "taskid" in task and "project" in task and "url" in task:
+            logger.info(
+                "result %s:%s %s -> %.30r"
+                % (task["project"], task["taskid"], task["url"], result)
+            )
+            print(
+                json.dumps(
+                    {
+                        "taskid": task["taskid"],
+                        "project": task["project"],
+                        "url": task["url"],
+                        "result": result,
+                        "updatetime": time.time(),
+                    }
+                )
+            )
         else:
-            logger.warning('result UNKNOW -> %.30r' % result)
+            logger.warning("result UNKNOW -> %.30r" % result)
             return

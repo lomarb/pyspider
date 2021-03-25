@@ -73,6 +73,8 @@ def connect_rpc(ctx, param, value):
               help='database url for projectdb, default: sqlite')
 @click.option('--resultdb', envvar='RESULTDB', callback=connect_db,
               help='database url for resultdb, default: sqlite')
+@click.option('--gcs-bucket', envvar='GCS_BUCKET',
+            help='GCS bucket where to store results')
 @click.option('--message-queue', envvar='AMQP_URL',
               help='connection url to message queue, '
               'default: builtin multiprocessing.Queue')
@@ -138,6 +140,11 @@ def cli(ctx, **kwargs):
     # create folder for counter.dump
     if not os.path.exists(kwargs['data_path']):
         os.mkdir(kwargs['data_path'])
+
+    if kwargs.get('gcs_bucket'):
+        pass
+    elif os.environ.get('GCS_BUCKET'):
+        kwargs['gcs_bucket'] = os.environ['GCS_BUCKET']
 
     # message queue, compatible with old version
     if kwargs.get('message_queue'):
@@ -314,7 +321,7 @@ def result_worker(ctx, result_cls, get_object=False):
     g = ctx.obj
     ResultWorker = load_cls(None, None, result_cls)
 
-    result_worker = ResultWorker(resultdb=g.resultdb, inqueue=g.processor2result)
+    result_worker = ResultWorker(resultdb=g.resultdb, inqueue=g.processor2result, gcs_bucket=g.gcs_bucket)
 
     g.instances.append(result_worker)
     if g.get('testing_mode') or get_object:
