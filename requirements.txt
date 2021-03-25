@@ -24,3 +24,4 @@ elasticsearch==2.3.0
 tblib==1.4.0
 beautifulsoup4==4.9.3
 html5lib==1.1
+python-dateutil==2.8.1
