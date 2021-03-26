@@ -76,7 +76,7 @@ class ProjectDB(BaseProjectDB):
         self.projects[name].update(obj)
         metadata = {k: v for k, v in self.projects[name].items() if k != "script"}
         with open(os.path.join(self.path, name + ".json"), "w") as outfile:
-            outfile.write(json.dumps(metadata))
+            outfile.write(json.dumps(metadata, indent=4, ensure_ascii=False))
         with open(os.path.join(self.path, name + ".py"), "w") as outfile:
             outfile.write(self.projects[name]["script"] or "\n")
         return self.projects[name]
