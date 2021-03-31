@@ -38,14 +38,16 @@ IMPORTANCE = ["LOW", "MEDIUM", "HIGH"]
 
 
 def validate_institution_name(result: dict) -> str:
-    iname = result.get("institution_name", None)
+    iname = result.get("institution_name", None) or result.get("name", None)
     if iname is None or not iname:
         raise ValueError("Institution name missing")
     return iname.strip()
 
 
 def validate_short_institution_name(result: dict) -> str:
-    sn = result.get("short_institution_name", None)
+    sn = result.get("short_institution_name", None) or\
+            result.get("short_name", None) or\
+            result.get("short", None)
     if sn is None or not sn:
         raise ValueError("Short institution name missing")
     return sn.strip()
@@ -109,7 +111,10 @@ def validate_body(result: dict) -> Optional[str]:
 
 
 def validate_lang(result: dict) -> str:
-    lang = result.get("expected_language_code", None)
+    lang = result.get("expected_language_code", None) or\
+            result.get("lang_code", None) or\
+            result.get("lang", None) or\
+            result.get("language", None)
     simple_re = re.compile("[a-z][a-z]")
     locale_re = re.compile("[a-z][a-z]-[A-Z][A-Z]")
     if lang is None:
@@ -123,7 +128,7 @@ def validate_lang(result: dict) -> str:
 
 
 def validate_jurisdiction(result: dict) -> str:
-    jur = result.get("jurisdiction", None)
+    jur = result.get("jurisdiction", None) or result.get("country", None)
     if jur is None:
         raise ValueError("Jurisdiction is not defined")
     iso3166_re = re.compile("[A-Z][A-Z]")
@@ -136,14 +141,16 @@ def validate_jurisdiction(result: dict) -> str:
 
 
 def validate_jurisdiction_state(result: dict) -> Optional[str]:
-    jurs = result.get("jurisdiction_state", None)
+    jurs = result.get("jurisdiction_state", None) or result.get("state", None)
     if jurs is None or not jurs.strip():
         return None
     return jurs.strip()
 
 
 def validate_jurisdiction_municipality(result: dict) -> Optional[str]:
-    jurm = result.get("jurisdiction_municipality", None)
+    jurm = result.get("jurisdiction_municipality", None) or\
+            result.get("municipality", None) or\
+            result.get("town", None)
     if jurm is None or not jurm.strip():
         return None
     return jurm.strip()
