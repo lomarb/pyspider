@@ -13,4 +13,4 @@ class GcsClient:
             raise IOError("GCS bucket not available, skipping")
 
         blob = self.bucket.blob(path)
-        return blob.upload_from_string(json)
+        return blob.upload_from_string(json, content_type="application/json")
