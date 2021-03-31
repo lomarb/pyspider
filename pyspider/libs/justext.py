@@ -63,6 +63,25 @@ class JustextError(Exception):
     "Base class for jusText exceptions."
 
 
+TAMERLON_SUPPORTED_LANGUAGES = {
+    "en": "English",
+    "en-GB": "English",
+    "en-US": "English",
+    "cs": "Czech",
+    "de": "German",
+    "ar": "Arabic",
+    "nl": "Dutch",
+    "fr": "French",
+    "ru": "Russian",
+    "es": "Spanish",
+    "pt": "Portuguese",
+    "pl": "Polish",
+    "it": "Italian",
+    "zh-CN": "Chinese_Simplified",
+    "zh-TW": "Chinese_Traditional",
+}
+
+
 def get_stoplist(language):
     "Returns an inbuilt stoplist for the language as a set of words."
     stoplist_contents = open(os.path.join(os.path.dirname(__file__), 'stoplists', language + ".txt")).read()
@@ -493,14 +512,21 @@ def justext(html_text, stoplist, length_low=LENGTH_LOW_DEFAULT,
     revise_paragraph_classification(paragraphs, max_good_distance, max_heading_distance)
     return paragraphs
 
-def bte(html, lang="English"):
-    return "\n".join([
+def lang2lang(lang):
+    if lang in TAMERLON_SUPPORTED_LANGUAGES:
+        return TAMERLON_SUPPORTED_LANGUAGES[lang]
+    else:
+        raise KeyError("Unsupported language %s in BTE" % lang)
+
+def bte(html, lang):
+    return "\n\n".join([
         p['text'].replace('<', '&lt;').replace('>', '&gt;').strip()
-        for p in justext(html, get_stoplist(lang))
+        for p in justext(html, get_stoplist(lang2lang(lang)))
         if p["class"] == "good"
     ])
 
-if __name__ == "__main__":
-    with open(sys.argv[1]) as f:
-        print(bte(f.read(), lang="Czech"))
-
+def guess_title(html, lang):
+    for p in justext(html, get_stoplist(lang2lang(lang))):
+        if p["heading"]:
+            return p['text'].replace('<', '&lt;').replace('>', '&gt;').strip()
+    return None

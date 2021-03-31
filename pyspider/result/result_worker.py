@@ -52,6 +52,7 @@ class ResultWorker(object):
             except Exception as e:
                 logger.error(repr(e))
 
+            # we might get rid of this in the future
             return self.resultdb.save(
                 project=task["project"],
                 taskid=task["taskid"],

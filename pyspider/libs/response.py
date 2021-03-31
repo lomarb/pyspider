@@ -129,6 +129,23 @@ class Response(object):
         self._text = content
         return content
 
+    def guess_title(self, lang=None, element=None):
+        if element:
+            from_element = self.doc(element).text().strip()
+            if from_element:
+                return from_element
+        return justext.guess_title(self.content, lang=lang or "en") or ""
+
+
+    def guess_body(self, lang=None, element=None):
+        if element:
+            from_element = self.doc(element).outer_html()
+            if outer_html:
+                jtxt = justext.bte(outer_html, lang=lang or "en")
+                if jtxt:
+                    return jtxt
+        return justext.bte(self.content, lang=lang or "en")
+
     @property
     def bte(self):
         return justext.bte(self.content)
