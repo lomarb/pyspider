@@ -12,15 +12,22 @@ class Handler(BaseHandler):
     def on_start(self):
         self.crawl('__START_URL__', callback=self.index_page)
 
-    @config(age=10 * 24 * 60 * 60)
     def index_page(self, response):
-        for each in response.doc('a[href^="http"]').items():
+        for each in response.doc('a').items():
             self.crawl(each.attr.href, callback=self.detail_page)
 
-    @config(age=-1)
     def detail_page(self, response):
         return {
-            "body": response.bte,
-            "url": response.url,
-            "title": response.doc('title').text(),
+            "body": response.guess_body(), # you may use e.g. div="div.body"
+            "title": response.guess_title(), # may be left empty in exceptional cases
+            "published": "__STRING_CONTAINING_DATE__",
+            "name": "__INSTITUTION_NAME__",
+            "short": "__SHORT_INSTITUTION_NAME__",
+            "jurisdiction": "US", # country code ISO 3166 alpha-2: US, SK, UN, ...
+            "state": "", # can be left empty
+            "municipality": "", # can be left empty
+            "importance": "LOW", # LOW*|MEDIUM|HIGH
+            "document_type": "UNKNOWN", # UNKNOWN*|NEWS|PRESS_RELEASE|COMMENT|ALERT|LITIGATION|OTHER
+            "source_type": "UNDEFINED", # UNDEFINED*|REGULATORY_ENFORCEMENT|LAW_ENFORCEMENT|JUDICIARY_COURT_RECORDS|NONGOV_ORG
+            "lang": "en",
         }
