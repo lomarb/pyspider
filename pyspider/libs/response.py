@@ -10,14 +10,14 @@ import re
 import six
 import json
 import chardet
-import lxml.html
-import lxml.etree
-from tblib import Traceback
-from pyquery import PyQuery
+import lxml.html  # type: ignore
+import lxml.etree  # type: ignore
+from tblib import Traceback  # type: ignore
+from pyquery import PyQuery  # type: ignore
 from requests.structures import CaseInsensitiveDict
 from requests import HTTPError
 from pyspider.libs import utils, justext
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup  # type: ignore
 
 # robust XML parsing
 # https://stackoverflow.com/questions/4972210/escape-unescaped-characters-in-xml-with-python
@@ -139,7 +139,7 @@ class Response(object):
 
     def guess_body(self, lang=None, element=None):
         if element:
-            from_element = self.doc(element).outer_html()
+            outer_html = self.doc(element).outer_html()
             if outer_html:
                 jtxt = justext.bte(outer_html, lang=lang or "en")
                 if jtxt:

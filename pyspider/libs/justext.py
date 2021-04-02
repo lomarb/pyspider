@@ -34,9 +34,9 @@ import sys
 
 from xml.sax.handler import ContentHandler
 
-import lxml.etree
-import lxml.html
-import lxml.sax
+import lxml.etree  # type: ignore
+import lxml.html  # type: ignore
+import lxml.sax  # type: ignore
 
 MAX_LINK_DENSITY_DEFAULT = 0.2
 LENGTH_LOW_DEFAULT = 70

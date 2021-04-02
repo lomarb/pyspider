@@ -196,7 +196,7 @@ try:
 except ImportError as e:
     warnings.warn("timeout is not supported on your platform.", FutureWarning)
 
-    class timeout:
+    class timeout:  # type: ignore
         """
         Time limit of command (for windows)
         """
@@ -387,7 +387,7 @@ def get_python_console(namespace=None):
         namespace.update(caller.f_locals)
 
     try:
-        from IPython.terminal.interactiveshell import TerminalInteractiveShell
+        from IPython.terminal.interactiveshell import TerminalInteractiveShell  # type: ignore
         shell = TerminalInteractiveShell(user_ns=namespace)
     except ImportError:
         try:
