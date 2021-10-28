@@ -29,7 +29,8 @@ ADD ./ /opt/pyspider
 
 # run test
 WORKDIR /opt/pyspider
-RUN pip install -e .[all]
+RUN pip install -e .[all] && \
+    pip install -e .[test]
 
 # Create a symbolic link to node_modules
 RUN ln -s /opt/node/node_modules ./node_modules
