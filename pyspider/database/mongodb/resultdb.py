@@ -38,11 +38,13 @@ class ResultDB(SplitTableMixin, BaseResultDB):
 
     def _parse(self, data):
         data['_id'] = str(data['_id'])
+        # TODO: remove data['result'] stringfy
         # if 'result' in data:
         #     data['result'] = json.loads(data['result'])
         return data
 
     def _stringify(self, data):
+        # TODO: remove data['result'] stringfy
         # if 'result' in data:
         #     data['result'] = json.dumps(data['result'])
         return data
