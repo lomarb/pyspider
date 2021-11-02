@@ -13,6 +13,7 @@ import six
 import copy
 import time
 import json
+import random
 import logging
 import traceback
 import functools
@@ -241,6 +242,14 @@ class Fetcher(object):
             proxy_string = task_fetch['proxy']
         elif self.proxy and task_fetch.get('proxy', True):
             proxy_string = self.proxy
+        # FIXME: Start to auto get a proxy in silent
+        if proxy_string == 'auto':
+            try:
+                resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@172.18.0.3:27017/resultdb?authSource=admin')
+                proxy_string = random.choice(list((list(resultdb.select('AutoProxyPool'))[0:1]+[{}])[0].get('result', {}).values()))
+            except:
+                proxy_string = None
+        # FIXME: End auto get a proxy in silent
         if proxy_string:
             if '://' not in proxy_string:
                 proxy_string = 'http://' + proxy_string
