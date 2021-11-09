@@ -219,6 +219,7 @@ class Fetcher(object):
     allowed_options = ['method', 'data', 'connect_timeout', 'timeout', 'cookies', 'use_gzip', 'validate_cert']
 
     def pack_tornado_request_parameters(self, url, task):
+        logger.info('1111111111')
         fetch = copy.deepcopy(self.default_options)
         fetch['url'] = url
         fetch['headers'] = tornado.httputil.HTTPHeaders(fetch['headers'])
