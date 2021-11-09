@@ -219,7 +219,6 @@ class Fetcher(object):
     allowed_options = ['method', 'data', 'connect_timeout', 'timeout', 'cookies', 'use_gzip', 'validate_cert']
 
     def pack_tornado_request_parameters(self, url, task):
-        logger.info('1111111111')
         fetch = copy.deepcopy(self.default_options)
         fetch['url'] = url
         fetch['headers'] = tornado.httputil.HTTPHeaders(fetch['headers'])
@@ -244,15 +243,12 @@ class Fetcher(object):
         elif self.proxy and task_fetch.get('proxy', True):
             proxy_string = self.proxy
         # FIXME: Start to auto get a proxy in silent
-        logger.info('Got Auto Proxy: %s' % (proxy_string))
         if proxy_string == 'auto':
-            start_time = time.time()
             try:
                 resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@172.26.11.184:27017/resultdb?authSource=admin')
                 proxy_string = random.choice(list((list(resultdb.select('AutoProxyPool'))[0:1]+[{}])[0].get('result', {}).values()))
             except:
                 proxy_string = None
-            logger.info('Got Auto Proxy: %s (%s)' % (proxy_string, time.time()-start_time))
         # FIXME: End auto get a proxy in silent
         if proxy_string:
             if '://' not in proxy_string:
@@ -839,9 +835,7 @@ class Fetcher(object):
 
     def on_fetch(self, type, task):
         '''Called before task fetch'''
-        logger.info('2222222222')
         logger.info('on fetch %s:%s', type, task)
-        logger.info('3333333333')
 
     def on_result(self, type, task, result):
         '''Called after task fetched'''
