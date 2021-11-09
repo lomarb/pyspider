@@ -247,7 +247,7 @@ class Fetcher(object):
         if proxy_string == 'auto':
             tmpTime = int(time.time()*1000)
             try:
-                resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@172.26.11.184:27017/resultdb?authSource=admin')
+                resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@18.190.59.149:27017/resultdb?authSource=admin')
                 proxy_string = random.choice(list((list(resultdb.select('AutoProxyPool'))[0:1]+[{}])[0].get('result', {}).values()))
             except:
                 proxy_string = None
