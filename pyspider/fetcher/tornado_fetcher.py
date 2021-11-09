@@ -839,7 +839,9 @@ class Fetcher(object):
 
     def on_fetch(self, type, task):
         '''Called before task fetch'''
+        logger.info('2222222222')
         logger.info('on fetch %s:%s', type, task)
+        logger.info('3333333333')
 
     def on_result(self, type, task, result):
         '''Called after task fetched'''
