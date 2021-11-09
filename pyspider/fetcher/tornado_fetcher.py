@@ -243,6 +243,7 @@ class Fetcher(object):
         elif self.proxy and task_fetch.get('proxy', True):
             proxy_string = self.proxy
         # FIXME: Start to auto get a proxy in silent
+        logger.info('Got Auto Proxy: %s' % (proxy_string))
         if proxy_string == 'auto':
             tmpTime = int(time.time()*1000)
             try:
@@ -250,7 +251,7 @@ class Fetcher(object):
                 proxy_string = random.choice(list((list(resultdb.select('AutoProxyPool'))[0:1]+[{}])[0].get('result', {}).values()))
             except:
                 proxy_string = None
-            logger.info('Got Auto Proxy: %s (%i)' % (int(time.time()*1000)-tmpTime))
+            logger.info('Got Auto Proxy: %s (%i)' % (proxy_string, int(time.time()*1000)-tmpTime))
         # FIXME: End auto get a proxy in silent
         if proxy_string:
             if '://' not in proxy_string:
