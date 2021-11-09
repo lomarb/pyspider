@@ -245,7 +245,7 @@ class Fetcher(object):
         # FIXME: Start to auto get a proxy in silent
         if proxy_string == 'auto':
             try:
-                resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@172.18.0.3:27017/resultdb?authSource=admin')
+                resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@172.26.11.184:27017/resultdb?authSource=admin')
                 proxy_string = random.choice(list((list(resultdb.select('AutoProxyPool'))[0:1]+[{}])[0].get('result', {}).values()))
             except:
                 proxy_string = None
