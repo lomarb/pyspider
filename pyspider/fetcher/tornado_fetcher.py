@@ -251,6 +251,9 @@ class Fetcher(object):
                 proxy_string = None
         # FIXME: End auto get a proxy in silent
         if proxy_string:
+            # FIXME: Start to auto get a proxy in silent
+            fetch['proxy'] = proxy_string
+            # FIXME: End auto get a proxy in silent
             if '://' not in proxy_string:
                 proxy_string = 'http://' + proxy_string
             proxy_splited = urlsplit(proxy_string)
