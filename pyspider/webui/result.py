@@ -19,9 +19,10 @@ def result():
     project = request.args.get('project')
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 20))
+    filter = request.args.get('filter', {})
 
     count = resultdb.count(project)
-    results = list(resultdb.select(project, offset=offset, limit=limit))
+    results = list(resultdb.select(project, offset=offset, limit=limit, filter=filter))
 
     return render_template(
         "result.html", count=count, results=results,
@@ -40,7 +41,8 @@ def dump_result(project, _format):
 
     offset = int(request.args.get('offset', 0)) or None
     limit = int(request.args.get('limit', 0)) or None
-    results = resultdb.select(project, offset=offset, limit=limit)
+    filter = request.args.get('filter', {}) or None
+    results = resultdb.select(project, offset=offset, limit=limit, filter=filter)
 
     if _format == 'json':
         valid = request.args.get('style', 'rows') == 'full'

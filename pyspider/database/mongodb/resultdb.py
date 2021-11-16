@@ -63,7 +63,7 @@ class ResultDB(SplitTableMixin, BaseResultDB):
             {'taskid': taskid}, {"$set": self._stringify(obj)}, upsert=True
         )
 
-    def select(self, project, fields=None, offset=0, limit=0):
+    def select(self, project, fields=None, offset=0, limit=0, filter={}):
         if project not in self.projects:
             self._list_project()
         if project not in self.projects:
@@ -71,7 +71,7 @@ class ResultDB(SplitTableMixin, BaseResultDB):
         offset = offset or 0
         limit = limit or 0
         collection_name = self._collection_name(project)
-        for result in self.database[collection_name].find({}, fields, skip=offset, limit=limit):
+        for result in self.database[collection_name].find(filter, fields, skip=offset, limit=limit):
             yield self._parse(result)
 
     def count(self, project):
