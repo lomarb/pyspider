@@ -344,6 +344,10 @@ class Fetcher(object):
 
         # setup request parameters
         fetch = self.pack_tornado_request_parameters(url, task)
+        # FIXME: Start to auto get a proxy in silent
+        if 'proxy' in fetch:
+            del fetch['proxy']
+        # FIXME: End auto get a proxy in silent
         task_fetch = task.get('fetch', {})
 
         session = cookies.RequestsCookieJar()
