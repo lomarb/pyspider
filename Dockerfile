@@ -15,7 +15,7 @@ ENV OPENSSL_CONF=/etc/ssl/
 ENV NODEJS_VERSION=14.17.4 \
     PATH=$PATH:/opt/node/bin
 WORKDIR "/opt/node"
-RUN apt-get -qq update && apt-get -qq install -y curl ca-certificates libx11-xcb1 libxtst6 libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0 --no-install-recommends && \
+RUN apt-get -qq update && apt-get -qq install -y curl ca-certificates libx11-xcb1 libxtst6 libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0 libgbm1 libxshmfence1 --no-install-recommends && \
     curl -sL https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64.tar.gz | tar xz --strip-components=1 && \
     rm -rf /var/lib/apt/lists/*
 RUN npm install puppeteer@11.0.0 express@4.17.1
