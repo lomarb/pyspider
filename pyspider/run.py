@@ -257,7 +257,7 @@ def fetcher(ctx, xmlrpc, no_xmlrpc, xmlrpc_host, xmlrpc_port, poolsize, proxy, u
     else:
         inqueue = g.scheduler2fetcher
         outqueue = g.fetcher2processor
-    fetcher = Fetcher(inqueue=inqueue, outqueue=outqueue,
+    fetcher = Fetcher(resultdb=g.resultdb, inqueue=inqueue, outqueue=outqueue,
                       poolsize=poolsize, proxy=proxy, async_mode=async_mode)
     fetcher.phantomjs_proxy = phantomjs_endpoint or g.phantomjs_proxy
     fetcher.puppeteer_proxy = puppeteer_endpoint or g.puppeteer_proxy
