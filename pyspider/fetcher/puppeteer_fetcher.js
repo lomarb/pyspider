@@ -1,6 +1,7 @@
 const express = require("express");
 const puppeteer = require('puppeteer');
 const bodyParser = require('body-parser');
+const useProxy = require('puppeteer-page-proxy');
 
 const app = express();
 
@@ -13,14 +14,7 @@ let browser_settings = {};
 app.use(async (req, res, next) => {
     if (init_browser) {
         var options = req.body;
-        if (options.proxy) {
-            if (options.proxy.indexOf("://") == -1) {
-                options.proxy = "http://" + options.proxy;
-            }
-            browser_settings["args"] = ['--no-sandbox', "--disable-setuid-sandbox", "--proxy-server="+options.proxy];
-        } else {
-          browser_settings["args"] = ['--no-sandbox', "--disable-setuid-sandbox"];
-        }
+        browser_settings["args"] = ['--no-sandbox', "--disable-setuid-sandbox"];
         browser_settings["headless"] = options.headless === "false"? false:true
         browser = await puppeteer.launch(browser_settings);
         init_browser=false;
@@ -31,11 +25,19 @@ app.use(async (req, res, next) => {
     };
 });
 
+process.on('unhandledRejection', error => {
+    // Will print "unhandledRejection err is not defined"
+    console.log('[puppeteer-page-proxy] unhandledRejection: ', error.message);
+});
 
 async function fetch(options) {
+    if (options.proxy && options.proxy.indexOf("://") == -1) {
+        options.proxy = "http://" + options.proxy;
+    }
     var page = await browser.newPage();
     options.start_time = Date.now();
     try {
+        await useProxy(page, options.proxy);
         await _fetch(page, options);
         var result = await make_result(page, options);
         await page.close();
