@@ -253,7 +253,7 @@ class Fetcher(object):
         # FIXME: End auto get a proxy in silent
         if proxy_string:
             # FIXME: Start to auto get a proxy in silent
-            # fetch['proxy'] = proxy_string
+            fetch['proxy'] = proxy_string
             # FIXME: End auto get a proxy in silent
             if '://' not in proxy_string:
                 proxy_string = 'http://' + proxy_string
@@ -346,8 +346,8 @@ class Fetcher(object):
         # setup request parameters
         fetch = self.pack_tornado_request_parameters(url, task)
         # FIXME: Start to auto get a proxy in silent
-        # if 'proxy' in fetch:
-        #     del fetch['proxy']
+        if 'proxy' in fetch:
+            del fetch['proxy']
         # FIXME: End auto get a proxy in silent
         task_fetch = task.get('fetch', {})
 
