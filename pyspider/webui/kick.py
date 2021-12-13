@@ -24,7 +24,7 @@ def keywords():
             json_keywords = json.loads(request.args.get('keywords', '[]')) or []
             for keyword in json_keywords:
                 keyword = keyword.strip()
-                query_list = list(__DB.find({'keyword': keyword}))
+                query_list = list(__DB.find({'keywords': keyword}))
                 if len(query_list) == 0:
                     result[keyword] = "None"
                 else:
@@ -46,10 +46,10 @@ def keywords():
         try:
             for keyword in json_keywords:
                 keyword = keyword.strip()
-                query_list = list(__DB.find({'keyword': keyword}))
+                query_list = list(__DB.find({'keywords': keyword}))
                 if len(query_list) == 0:
                     print("===========%s 创建中!===========" % (keyword))
-                    __DB.insert_one({'keyword': keyword, 'status': 0})
+                    __DB.insert_one({'keywords': keyword, 'status': 0})
                     result[keyword] = 0
                 else:
                     print("===========%s 已存在!===========" % (keyword))
@@ -107,7 +107,7 @@ def stats():
             result['running'] = running
             result['done'] = done
             for item in __DB.find({"status": status}, skip=offset, limit=limit):
-                keywords.append(item['keyword'])
+                keywords.append(item['keywords'])
             result["keywords"] = keywords
             return json.dumps(result), 200, {
                 'Access-Control-Allow-Origin': '*',
