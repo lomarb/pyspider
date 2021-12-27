@@ -218,3 +218,7 @@ def get_script(project):
 @app.route('/blank.html')
 def blank_html():
     return ""
+
+@app.route('/debug/github/<branch>', methods=['POST', ])
+def git_save(branch):
+    pass
