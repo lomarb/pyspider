@@ -13,6 +13,7 @@ import inspect
 import datetime
 import traceback
 import os
+import logging
 from flask import render_template, request, json
 from .git_pull import pull
 
