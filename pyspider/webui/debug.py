@@ -274,3 +274,4 @@ def get_script(project):
 @app.route('/blank.html')
 def blank_html():
     return ""
+
