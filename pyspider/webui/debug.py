@@ -12,7 +12,9 @@ import socket
 import inspect
 import datetime
 import traceback
+import os
 from flask import render_template, request, json
+from .git_pull import pull
 
 try:
     import flask_login as login
@@ -33,7 +35,7 @@ default_task = {
     },
 }
 default_script = inspect.getsource(sample_handler)
-
+myLogger = logging.getLogger('handler_screen')
 
 @app.route('/debug/<project>', methods=['GET', 'POST'])
 def debug(project):
@@ -203,6 +205,60 @@ def save(project):
             return 'rpc error', 200
 
     return 'ok', 200
+
+@app.route('/debug/github/<branch>', methods=['GET','POST'])
+def git_save(branch):
+    if request.method == 'GET' or request.method == 'POST':
+        nowtime = time.time()
+        pull(branch)
+        path = '/opt/tmp'
+        files = os.listdir(path)
+        print("nowtime:" + str(nowtime))
+
+        files.remove('.git')
+        # files.remove('README.md')
+        for file in files:
+            # createdTime = time.localtime(os.stat(os.path.join(path, file)).st_ctime)
+            # print(file + ' create time:' + str(time.mktime(createdTime)))
+            modifiedTime = time.localtime(os.stat(os.path.join(path, file)).st_mtime)
+            # print(file + ' modified time:' + str(time.mktime(modifiedTime)))
+            if float(time.mktime(modifiedTime)) > nowtime:
+                # print('更新或创建!')
+                f = open(os.path.join(path, file))
+                script = f.read()
+                project = file.rstrip('.py')
+                projectdb = app.config['projectdb']
+                project_info = projectdb.get(project, fields=['name', 'status', 'group'])
+                if project_info and 'lock' in projectdb.split_group(project_info.get('group')) \
+                        and not login.current_user.is_active():
+                    return app.login_response
+
+                if project_info:
+                    info = {
+                        'script': script,
+                    }
+                    if project_info.get('status') in ('DEBUG', 'RUNNING',):
+                        info['status'] = 'CHECKING'
+                    projectdb.update(project, info)
+                else:
+                    info = {
+                        'name': project,
+                        'script': script,
+                        'status': 'TODO',
+                        'rate': app.config.get('max_rate', 1),
+                        'burst': app.config.get('max_burst', 3),
+                    }
+                    projectdb.insert(project, info)
+
+                rpc = app.config['scheduler_rpc']
+                if rpc is not None:
+                    try:
+                        rpc.update_project()
+                    except socket.error as e:
+                        app.logger.warning('connect to scheduler rpc error: %r', e)
+                        return 'rpc error', 200
+
+                return 'ok', 200
 
 
 @app.route('/debug/<project>/get')
