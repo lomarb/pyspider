@@ -3,7 +3,7 @@ import logging, os
 myLogger = logging.getLogger('handler_screen')
 
 
-def pull(branch):
+def pull(branch, repo_url):
     import git
     path = '/opt/tmp/'
     try:
@@ -20,8 +20,7 @@ def pull(branch):
         myLogger.info('==========All ready pulled!==========')
     else:
         try:
-            clone = git.Repo.clone_from("git@github.com:lfg19991013/My_first_repository.git",
-                                        to_path='/opt/tmp/', branch=branch)
+            clone = git.Repo.clone_from(repo_url, to_path='/opt/tmp/', branch=branch)
             print("已经克隆啦！")
             myLogger.info('==========All ready cloned!==========')
         except  Exception as e:
@@ -30,4 +29,4 @@ def pull(branch):
 
 
 if __name__ == '__main__:':
-    pull()
+    pull()                                                                                                                                                          1,1           All
