@@ -26,7 +26,4 @@ def pull(branch, repo_url):
         except  Exception as e:
             print(e)
             myLogger.info('==========%s=========' % (e))
-
-
-if __name__ == '__main__:':
-    pull()                                                                                                                                                          1,1           All
+                                                                                                      
