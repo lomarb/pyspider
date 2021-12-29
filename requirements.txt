@@ -22,3 +22,4 @@ kombu==4.4.0
 psycopg2==2.8.2
 elasticsearch==2.3.0
 tblib==1.4.0
+GitPython==3.1.18
