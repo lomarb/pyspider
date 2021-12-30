@@ -2,7 +2,7 @@ Features:
 --------
 
 1. 新增从Github webhook导入爬虫源码
-* API：/debug/github/<branch>/webhook
+* API：/debug/github/\<branch\>/webhook
 * 使用时，需要现在webui所在的服务器配置ssh key， 然后将公钥填到github账号的ssh keys里面
 ```shell
 $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
