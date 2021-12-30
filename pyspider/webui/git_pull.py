@@ -20,7 +20,9 @@ def pull(branch, repo_url):
         myLogger.info('==========All ready pulled!==========')
     else:
         try:
-            clone = git.Repo.clone_from(repo_url, to_path='/opt/tmp/', branch=branch)
+            clone = git.Repo.clone_from(repo_url, to_path='/opt/tmp/', branch=branch, env={
+                                            'GIT_SSH_COMMAND': 'ssh -o StrictHostKeyChecking=no'
+                                        })
             print("已经克隆啦！")
             myLogger.info('==========All ready cloned!==========')
         except  Exception as e:

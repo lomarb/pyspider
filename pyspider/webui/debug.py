@@ -209,7 +209,7 @@ def save(project):
     return 'ok', 200
 
 
-@app.route('/debug/github/<branch>', methods=['POST', ])
+@app.route('/debug/github/<branch>/webhook', methods=['POST', ])
 def git_save(branch):
     myLogger.info('Post from github: %s' % (request.get_json()))
     nowtime = int(time.time() * 1000)
