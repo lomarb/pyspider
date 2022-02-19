@@ -13,6 +13,7 @@ import inspect
 import datetime
 import traceback
 import os
+import re
 import logging
 from flask import render_template, request, json
 from .git_pull import pull
@@ -223,12 +224,10 @@ def git_save(branch):
         if modifiedTime > nowtime:
             f = open(os.path.join(path, file))
             script = f.read()
-            project = file.rstrip('.py')
+            project = re.search(r'.*(?=\.py)', file).group()
             projectdb = app.config['projectdb']
-            project_info = projectdb.get(
-                project, fields=['name', 'status', 'group'])
-            if project_info and 'lock' in projectdb.split_group(project_info.get('group')) \
-                    and not login.current_user.is_active():
+            project_info = projectdb.get(project, fields=['name', 'status', 'group'])
+            if project_info and 'lock' in projectdb.split_group(project_info.get('group')) and not login.current_user.is_active():
                 return app.login_response
 
             if project_info:
