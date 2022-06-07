@@ -39,10 +39,11 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
+    fields = request.args.get('fields', {}) or None
     offset = int(request.args.get('offset', 0)) or None
     limit = int(request.args.get('limit', 0)) or None
     filter = request.args.get('filter', {}) or None
-    results = resultdb.select(project, offset=offset, limit=limit, filter=filter)
+    results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
     if _format == 'json':
         valid = request.args.get('style', 'rows') == 'full'

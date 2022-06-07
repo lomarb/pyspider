@@ -26,7 +26,7 @@ class ResultDB(object):
     def save(self, project, taskid, url, result):
         raise NotImplementedError
 
-    def select(self, project, fields=None, offset=0, limit=None):
+    def select(self, project, fields=None, offset=0, limit=None, filter=None):
         raise NotImplementedError
 
     def count(self, project):
