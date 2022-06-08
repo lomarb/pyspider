@@ -40,7 +40,7 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
-    fields = request.args.get('fields', {}) or None
+    fields = request.args.get('fields', None) or None
     offset = int(request.args.get('offset', 0)) or None
     limit = int(request.args.get('limit', 0)) or None
     filter = request.args.get('filter', {}) or None
