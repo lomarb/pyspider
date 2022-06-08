@@ -22,7 +22,7 @@ def result():
     limit = int(request.args.get('limit', 20))
     filter = request.args.get('filter', {}) or None
 
-    count = resultdb.count(project)
+    count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
 
     return render_template(
