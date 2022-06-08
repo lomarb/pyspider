@@ -17,12 +17,13 @@ from pyspider.libs import result_dump
 def result():
     resultdb = app.config['resultdb']
     project = request.args.get('project')
+    fields = request.args.get('fields', {}) or None
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 20))
-    filter = request.args.get('filter', {})
+    filter = request.args.get('filter', {}) or None
 
     count = resultdb.count(project)
-    results = list(resultdb.select(project, offset=offset, limit=limit, filter=filter))
+    results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
 
     return render_template(
         "result.html", count=count, results=results,

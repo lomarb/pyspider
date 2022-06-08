@@ -68,8 +68,10 @@ class ResultDB(SplitTableMixin, BaseResultDB):
             self._list_project()
         if project not in self.projects:
             return
+        fields = json.loads(fields) or None
         offset = offset or 0
         limit = limit or 0
+        filter = json.loads(filter) or None
         collection_name = self._collection_name(project)
         for result in self.database[collection_name].find(filter, fields, skip=offset, limit=limit):
             yield self._parse(result)
