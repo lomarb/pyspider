@@ -28,7 +28,7 @@ def result():
     return render_template(
         "result.html", count=count, results=results,
         result_formater=result_dump.result_formater,
-        project=project, offset=offset, limit=limit, json=json
+        project=project, fields=fields, offset=offset, limit=limit, filter=filter, json=json
     )
 
 

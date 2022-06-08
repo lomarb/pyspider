@@ -29,7 +29,7 @@ class ResultDB(object):
     def select(self, project, fields=None, offset=0, limit=None, filter=None):
         raise NotImplementedError
 
-    def count(self, project):
+    def count(self, project, filter=None):
         raise NotImplementedError
 
     def get(self, project, taskid, fields=None):
