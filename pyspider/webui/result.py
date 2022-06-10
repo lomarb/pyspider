@@ -43,7 +43,7 @@ def dump_result(project, _format):
     fields = request.args.get('fields', None) or None
     offset = int(request.args.get('offset', 0)) or None
     limit = int(request.args.get('limit', 0)) or None
-    filter = request.args.get('filter', {}) or None
+    filter = request.args.get('filter', None) or None
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
     if _format == 'json':
