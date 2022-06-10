@@ -73,7 +73,6 @@ class ResultDB(SplitTableMixin, BaseResultDB):
         limit = limit or 0
         filter = json.loads(filter) if filter else {}
         collection_name = self._collection_name(project)
-        print(filter)
         for result in self.database[collection_name].find(filter, fields, skip=offset, limit=limit):
             yield self._parse(result)
 
