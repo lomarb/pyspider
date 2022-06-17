@@ -19,8 +19,19 @@ def result():
     project = request.args.get('project')
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 20))
-    fields = request.args.get('fields', None) or request.json.get('fields', None) or request.form.get('fields', None) or {}
-    filter = request.args.get('filter', None) or request.json.get('filter', None) or request.form.get('filter', None) or {}
+    fields = request.args.get('fields', None) or {}
+    filter = request.args.get('filter', None) or {}
+    
+    if request.method == 'POST':
+        if request.content_type.startswith('application/json'):
+            fields = request.json.get('fields', None) or {}
+            filter = request.json.get('filter', None) or {}
+        elif request.content_type.startswith('multipart/form-data'):
+            fields = request.form.get('fields', None) or {}
+            filter = request.form.get('filter', None) or {}
+        else:
+            fields = request.values.get('fields', None) or {}
+            filter = request.values.get('filter', None) or {}
 
     count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
@@ -42,8 +53,20 @@ def dump_result(project, _format):
 
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 100))
-    fields = request.args.get('fields', None) or request.json.get('fields', None) or request.form.get('fields', None) or {}
-    filter = request.args.get('filter', None) or request.json.get('filter', None) or request.form.get('filter', None) or {}
+    fields = request.args.get('fields', None) or {}
+    filter = request.args.get('filter', None) or {}
+    
+    if request.method == 'POST':
+        if request.content_type.startswith('application/json'):
+            fields = request.json.get('fields', None) or {}
+            filter = request.json.get('filter', None) or {}
+        elif request.content_type.startswith('multipart/form-data'):
+            fields = request.form.get('fields', None) or {}
+            filter = request.form.get('filter', None) or {}
+        else:
+            fields = request.values.get('fields', None) or {}
+            filter = request.values.get('filter', None) or {}
+    
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
     if _format == 'json':
