@@ -19,7 +19,7 @@ def result():
     project = request.values.get('project')
     offset = int(request.values.get('offset', 0))
     limit = int(request.values.get('limit', 20))
-    fields = request.values.get('fields', None) or {}
+    fields = request.values.get('fields', None) or None
     filter = request.values.get('filter', None) or {}
 
     count = resultdb.count(project, filter)
@@ -42,7 +42,7 @@ def dump_result(project, _format):
 
     offset = int(request.values.get('offset', 0))
     limit = int(request.values.get('limit', 100))
-    fields = request.values.get('fields', None) or {}
+    fields = request.values.get('fields', None) or None
     filter = request.values.get('filter', None) or {}
     
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
