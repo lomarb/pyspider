@@ -20,7 +20,7 @@ def result():
     offset = int(request.values.get('offset', 0))
     limit = int(request.values.get('limit', 20))
     fields = request.values.get('fields', None) or None
-    filter = request.values.get('filter', None) or {}
+    filter = request.values.get('filter', {})
 
     count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
@@ -40,10 +40,10 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
-    offset = int(request.values.get('offset', 0))
-    limit = int(request.values.get('limit', 100))
-    fields = request.values.get('fields', None) or None
-    filter = request.values.get('filter', None) or {}
+    offset = int(request.values.get('offset', 0)) or None
+    limit = int(request.values.get('limit', 0)) or None
+    fields = request.values.get('fields', None)
+    filter = request.values.get('filter', {})
     
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
