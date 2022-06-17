@@ -13,7 +13,7 @@ from .app import app
 from pyspider.libs import result_dump
 
 
-@app.route('/results')
+@app.route('/results', methods=['POST', 'GET'])
 def result():
     resultdb = app.config['resultdb']
     project = request.args.get('project')
@@ -32,7 +32,7 @@ def result():
     )
 
 
-@app.route('/results/dump/<project>.<_format>')
+@app.route('/results/dump/<project>.<_format>', methods=['POST', 'GET'])
 def dump_result(project, _format):
     resultdb = app.config['resultdb']
     # force update project list
