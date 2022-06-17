@@ -5,6 +5,7 @@
 #         http://binux.me
 # Created on 2014-10-13 22:18:36
 
+import json
 import time
 
 from pymongo import MongoClient
@@ -69,6 +70,8 @@ class ResultDB(SplitTableMixin, BaseResultDB):
             return
         offset = offset or 0
         limit = limit or 0
+        if fields: fields = json.loads(fields)
+        filter = json.loads(filter)
         collection_name = self._collection_name(project)
         for result in self.database[collection_name].find(filter, fields, skip=offset, limit=limit):
             yield self._parse(result)
@@ -86,6 +89,7 @@ class ResultDB(SplitTableMixin, BaseResultDB):
             self._list_project()
         if project not in self.projects:
             return
+        if fields: fields = json.loads(fields)
         collection_name = self._collection_name(project)
         ret = self.database[collection_name].find_one({'taskid': taskid}, fields)
         if not ret:
