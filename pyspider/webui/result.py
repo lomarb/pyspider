@@ -17,10 +17,10 @@ from pyspider.libs import result_dump
 def result():
     resultdb = app.config['resultdb']
     project = request.args.get('project')
-    fields = request.args.get('fields', {}) or None
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 20))
-    filter = request.args.get('filter', {}) or None
+    fields = request.args.get('fields', None) or request.json.get('fields', None) or request.form.get('fields', None) or {}
+    filter = request.args.get('filter', None) or request.json.get('filter', None) or request.form.get('filter', None) or {}
 
     count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
@@ -40,10 +40,10 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
-    fields = request.args.get('fields', None) or None
-    offset = int(request.args.get('offset', 0)) or None
-    limit = int(request.args.get('limit', 0)) or None
-    filter = request.args.get('filter', None) or None
+    offset = int(request.args.get('offset', 0))
+    limit = int(request.args.get('limit', 100))
+    fields = request.args.get('fields', None) or request.json.get('fields', None) or request.form.get('fields', None) or {}
+    filter = request.args.get('filter', None) or request.json.get('filter', None) or request.form.get('filter', None) or {}
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
     if _format == 'json':
