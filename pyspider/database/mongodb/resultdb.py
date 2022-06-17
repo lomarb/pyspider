@@ -80,7 +80,7 @@ class ResultDB(SplitTableMixin, BaseResultDB):
         if project not in self.projects:
             return
         collection_name = self._collection_name(project)
-        return self.database[collection_name].count_documents(filter)
+        return self.database[collection_name].count_documents(filter or {})
 
     def get(self, project, taskid, fields=None):
         if project not in self.projects:
