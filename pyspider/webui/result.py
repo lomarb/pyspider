@@ -42,7 +42,7 @@ def dump_result(project, _format):
         return "no such project.", 404
 
     offset = int(request.values.get('offset', 0))
-    limit = int(request.values.get('limit', 100))
+    limit = int(request.values.get('limit', 0))
     fields = json.loads(request.values.get('fields', '{}')) or None
     filter = json.loads(request.values.get('filter', '{}')) or None
     
