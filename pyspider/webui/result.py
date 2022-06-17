@@ -19,7 +19,7 @@ def result():
     project = request.args.get('project')
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 20))
-    fields = request.args.get('fields', None) or None
+    fields = request.args.get('fields', None)
     filter = request.args.get('filter', {})
 
     count = resultdb.count(project, filter)
