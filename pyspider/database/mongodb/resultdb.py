@@ -5,7 +5,6 @@
 #         http://binux.me
 # Created on 2014-10-13 22:18:36
 
-import json
 import time
 
 from pymongo import MongoClient

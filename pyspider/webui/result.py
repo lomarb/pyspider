@@ -7,6 +7,7 @@
 
 from __future__ import unicode_literals
 
+import json
 from flask import render_template, request, json
 from flask import Response
 from .app import app
@@ -19,8 +20,8 @@ def result():
     project = request.args.get('project')
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 20))
-    fields = request.args.get('fields', None) or None
-    filter = request.args.get('filter', {})
+    fields = json.loads(request.args.get('fields', {}))
+    filter = json.loads(request.args.get('filter', {}))
 
     count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
@@ -42,8 +43,8 @@ def dump_result(project, _format):
 
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 100))
-    fields = request.args.get('fields', None)
-    filter = request.args.get('filter', {})
+    fields = json.loads(request.args.get('fields', {}))
+    filter = json.loads(request.args.get('filter', {}))
     
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
