@@ -18,7 +18,8 @@
 
   <body>
     <div class="top-bar">
-      <h1>{{ project }} - Results - Total: {{ count }}</h1>
+      <h1>{{ project }} - Results</h1>
+      <h4>Total: {{ count }}, Filter: {{ filter }}, Fields: {{ fields }}, Skip: {{ skip }}, Limit: {{ limit }}</h4>
       <div class="btn-group">
         <a href="/results/dump/{{ project }}.json"
           target="_blank" class="btn btn-default btn-sm">

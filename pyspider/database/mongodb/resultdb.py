@@ -70,10 +70,8 @@ class ResultDB(SplitTableMixin, BaseResultDB):
             return
         offset = offset or 0
         limit = limit or 0
-        fields = json.loads(fields) if fields else None
-        filter = json.loads(filter) if filter else {}
         collection_name = self._collection_name(project)
-        for result in self.database[collection_name].find(filter, fields, skip=offset, limit=limit):
+        for result in self.database[collection_name].find(filter or {}, fields, skip=offset, limit=limit):
             yield self._parse(result)
 
     def count(self, project, filter=None):
@@ -82,7 +80,6 @@ class ResultDB(SplitTableMixin, BaseResultDB):
         if project not in self.projects:
             return
         collection_name = self._collection_name(project)
-        filter = json.loads(filter) if filter else {}
         return self.database[collection_name].count_documents(filter)
 
     def get(self, project, taskid, fields=None):
@@ -91,7 +88,6 @@ class ResultDB(SplitTableMixin, BaseResultDB):
         if project not in self.projects:
             return
         collection_name = self._collection_name(project)
-        fields = json.loads(fields) if fields else None
         ret = self.database[collection_name].find_one({'taskid': taskid}, fields)
         if not ret:
             return ret
