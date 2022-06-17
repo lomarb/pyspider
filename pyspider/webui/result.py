@@ -16,11 +16,11 @@ from pyspider.libs import result_dump
 @app.route('/results', methods=['POST', 'GET'])
 def result():
     resultdb = app.config['resultdb']
-    project = request.values.get('project')
-    offset = int(request.values.get('offset', 0))
-    limit = int(request.values.get('limit', 20))
-    fields = request.values.get('fields', None) or None
-    filter = request.values.get('filter', {})
+    project = request.args.get('project')
+    offset = int(request.args.get('offset', 0))
+    limit = int(request.args.get('limit', 20))
+    fields = request.args.get('fields', None) or None
+    filter = request.args.get('filter', {})
 
     count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
@@ -40,10 +40,10 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
-    offset = int(request.values.get('offset', 0)) or None
-    limit = int(request.values.get('limit', 0)) or None
-    fields = request.values.get('fields', None)
-    filter = request.values.get('filter', {})
+    offset = int(request.args.get('offset', 0)) or None
+    limit = int(request.args.get('limit', 0)) or None
+    fields = request.args.get('fields', None)
+    filter = request.args.get('filter', {})
     
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
