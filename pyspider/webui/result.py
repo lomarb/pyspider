@@ -16,15 +16,11 @@ from pyspider.libs import result_dump
 @app.route('/results', methods=['POST', 'GET'])
 def result():
     resultdb = app.config['resultdb']
-    project = request.args.get('project')
-    offset = int(request.args.get('offset', 0))
-    limit = int(request.args.get('limit', 20))
-    fields = request.args.get('fields', None) or {}
-    filter = request.args.get('filter', None) or {}
-    
-    if request.method == 'POST' and request.content_type.startswith('multipart/form-data'):
-        fields = request.form.get('fields', None) or {}
-        filter = request.form.get('filter', None) or {}
+    project = request.values.get('project')
+    offset = int(request.values.get('offset', 0))
+    limit = int(request.values.get('limit', 20))
+    fields = request.values.get('fields', None) or {}
+    filter = request.values.get('filter', None) or {}
 
     count = resultdb.count(project, filter)
     results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
@@ -44,14 +40,10 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
-    offset = int(request.args.get('offset', 0))
-    limit = int(request.args.get('limit', 100))
-    fields = request.args.get('fields', None) or {}
-    filter = request.args.get('filter', None) or {}
-    
-    if request.method == 'POST' and request.content_type.startswith('multipart/form-data'):
-        fields = request.form.get('fields', None) or {}
-        filter = request.form.get('filter', None) or {}
+    offset = int(request.values.get('offset', 0))
+    limit = int(request.values.get('limit', 100))
+    fields = request.values.get('fields', None) or {}
+    filter = request.values.get('filter', None) or {}
     
     results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
