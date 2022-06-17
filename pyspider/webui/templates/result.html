@@ -20,13 +20,13 @@
     <div class="top-bar">
       <h1>{{ project }} - Results - Total: {{ count }}</h1>
       <div class="btn-group">
-        <a href="/results/dump/{{ project }}.json"
+        <a href="/results/dump/{{ project }}.json?style=full{% if filter %}&filter={{ filter }}{% endif %}{% if fields %}&fields={{ fields }}{% endif %}"
           target="_blank" class="btn btn-default btn-sm">
           <span class="glyphicon glyphicon-download-alt"></span>
           JSON</a>
-        <a href="/results/dump/{{ project }}.txt"
+        <a href="/results/dump/{{ project }}.txt?{% if filter %}filter={{ filter }}{% endif %}{% if fields %}&fields={{ fields }}{% endif %}"
           target="_blank" class="btn btn-default btn-sm">URL-JSON</a>
-        <a href="/results/dump/{{ project }}.csv"
+        <a href="/results/dump/{{ project }}.csv?{% if filter %}filter={{ filter }}{% endif %}{% if fields %}&fields={{ fields }}{% endif %}"
           target="_blank" class="btn btn-default btn-sm">CSV</a>
       </div>
     </div>
