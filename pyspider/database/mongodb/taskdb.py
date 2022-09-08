@@ -40,20 +40,23 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
     def _parse(self, data):
         if '_id' in data:
             del data['_id']
+        # TODO: remove data stringify
         for each in ('schedule', 'fetch', 'process', 'track'):
             if each in data:
                 if data[each]:
                     if isinstance(data[each], bytearray):
                         data[each] = str(data[each])
-                    data[each] = json.loads(data[each], encoding='utf8')
+                    if isinstance(data[each], str):
+                        data[each] = json.loads(data[each], encoding='utf8')
                 else:
                     data[each] = {}
         return data
 
     def _stringify(self, data):
-        for each in ('schedule', 'fetch', 'process', 'track'):
-            if each in data:
-                data[each] = json.dumps(data[each])
+        # TODO: remove data stringify
+        # for each in ('schedule', 'fetch', 'process', 'track'):
+        #     if each in data:
+        #         data[each] = json.dumps(data[each])
         return data
 
     def load_tasks(self, status, project=None, fields=None):
