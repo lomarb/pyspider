@@ -123,7 +123,7 @@
             <th data-type="num">actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="contentTask">
         {% raw %}
           <tr v-cloak v-for="project in projects" data-name="{{* project.name }}">
             <td class="project-group"><span>{{ project.group }}</span></td>
@@ -177,7 +177,25 @@
     </section>
     <script>
       // json projects data for vue
-      var projects = {{ projects | tojson | safe }};
+      var tg = new Set;
+      var groupName = ''
+      if (location.search.indexOf('group=') > -1) {
+        groupName = location.search.split('group=')[1]
+      }
+      
+      var allTask = {{ projects | tojson | safe }};
+      allTask = JSON.parse(JSON.stringify(allTask))
+      var projects = []
+      allTask.forEach(el => {
+        tg.add(el.group)
+        if (groupName=='') {
+          projects.push(el)
+        } else {
+          if (el.group == groupName) {
+            projects.push(el)
+          }
+        }
+      });
     </script>
     <script src="{{ url_for('cdn', path='twitter-bootstrap/3.1.1/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('cdn', path='x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
