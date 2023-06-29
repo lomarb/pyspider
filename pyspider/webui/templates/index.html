@@ -206,7 +206,7 @@
       var html = "";
       var groupArr = Array.from(tg)
       $.each(groupArr, function(k, v) { //这里的函数参数是键值对的形式，k代表键名，v代表值                
-          html += '<option value="' + cont[k] + '">' + cont[k] + '</option>';
+          html += '<option value="' + groupArr[k] + '">' + groupArr[k] + '</option>';
       });
       $("#groupSelect").append(html);
 
