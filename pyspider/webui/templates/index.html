@@ -57,6 +57,12 @@
           <button class="project-create btn btn-default btn-primary" data-toggle="modal" data-target="#create-project-modal">Create</button>
         </div>
 
+        <div>
+          <select name="group" id="groupSelect">
+            
+          </select>
+        </div>
+
         <div class="active-btn-div">
           {% if config.scheduler_rpc is not none %}
             <a class="btn btn-default btn-info" href='/tasks' target=_blank>Recent Active Tasks</a>
@@ -196,6 +202,18 @@
           }
         }
       });
+
+      var html = "";
+      var groupArr = Array.from(tg)
+      $.each(groupArr, function(k, v) { //这里的函数参数是键值对的形式，k代表键名，v代表值                
+          html += '<option value="' + cont[k] + '">' + cont[k] + '</option>';
+      });
+      $("#groupSelect").append(html);
+
+      $("#groupSelect").change(function () {
+        console.log($(".groupSelect").val());
+      })
+
     </script>
     <script src="{{ url_for('cdn', path='twitter-bootstrap/3.1.1/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('cdn', path='x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
