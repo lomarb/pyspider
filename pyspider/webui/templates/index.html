@@ -57,8 +57,8 @@
           <button class="project-create btn btn-default btn-primary" data-toggle="modal" data-target="#create-project-modal">Create</button>
         </div>
 
-        <div>
-          <select name="group" id="groupSelect">
+        <div style="float: right;" class="btn">
+          <select name="group" id="groupSelect" class="form-select">
             
           </select>
         </div>
@@ -211,7 +211,8 @@
       $("#groupSelect").append(html);
 
       $("#groupSelect").change(function () {
-        console.log($(".groupSelect").val());
+        console.log($("#groupSelect").val());
+        location.href = location.protocol + '//' + location.host + '?group=' + $("#groupSelect").val()
       })
 
     </script>
