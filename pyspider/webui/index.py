@@ -7,7 +7,7 @@
 
 import socket
 import hashlib
-import six
+# import six
 from six import iteritems, itervalues
 from flask import render_template, request, json
 
@@ -19,7 +19,7 @@ except ImportError:
 from .app import app
 
 index_fields = ['name', 'group', 'status', 'comments', 'rate', 'burst', 'updatetime']
-md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
+# md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
 
 
 def utf8(string):
