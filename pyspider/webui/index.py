@@ -127,65 +127,65 @@ def counter():
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
 
-@app.route('/dispatcher', methods=['POST', ])
-def dispatchertask():
-    rpc = app.config['scheduler_rpc']
-    if rpc is None:
-        return json.dumps({})
+# @app.route('/dispatcher', methods=['POST', ])
+# def dispatchertask():
+#     rpc = app.config['scheduler_rpc']
+#     if rpc is None:
+#         return json.dumps({})
 
-    projectdb = app.config['projectdb']
+#     projectdb = app.config['projectdb']
 
-    project = request.form['project']   # 项目文件名称
-    key = request.form['key']           # 不同项目需要传入的参数
-    keyword = request.form['keyword']   # 传入的搜索词
-    url = request.form['url']   # 传入的url唯一值
+#     project = request.form['project']   # 项目文件名称
+#     key = request.form['key']           # 不同项目需要传入的参数
+#     keyword = request.form['keyword']   # 传入的搜索词
+#     url = request.form['url']   # 传入的url唯一值
 
-    if not project:
-        return "no such project.", 404
+#     if not project:
+#         return "no such project.", 404
     
-    if not url:
-        return "no such url.", 404
+#     if not url:
+#         return "no such url.", 404
 
-    if not key:
-        return "no such key.", 404
+#     if not key:
+#         return "no such key.", 404
     
-    if not keyword:
-        return "no such keyword.", 404
+#     if not keyword:
+#         return "no such keyword.", 404
     
-    message = {
-        key: keyword
-    }
+#     message = {
+#         key: keyword
+#     }
 
-    project_info = projectdb.get(project, fields=('name', 'group'))
-    if not project_info:
-        return "no such project.", 404
-    if 'lock' in projectdb.split_group(project_info.get('group')) \
-            and not login.current_user.is_active():
-        return app.login_response
+#     project_info = projectdb.get(project, fields=('name', 'group'))
+#     if not project_info:
+#         return "no such project.", 404
+#     if 'lock' in projectdb.split_group(project_info.get('group')) \
+#             and not login.current_user.is_active():
+#         return app.login_response
 
-    newtask = {
-        'taskid': md5string(url),
-        'project': project,
-        'url': url,
-        'fetch': {
-            'save': ('__command__', message),
-        },
-        'process': {
-            'callback': '_on_message',
-        }
-        "schedule": {
-            "age": 0,
-            "priority": 9,
-            "force_update": True,
-        },
-    }
+#     newtask = {
+#         'taskid': md5string(url),
+#         'project': project,
+#         'url': url,
+#         'fetch': {
+#             'save': ('__command__', message),
+#         },
+#         'process': {
+#             'callback': '_on_message',
+#         }
+#         "schedule": {
+#             "age": 0,
+#             "priority": 9,
+#             "force_update": True,
+#         },
+#     }
 
-    try:
-        ret = rpc.newtask(newtask)
-    except socket.error as e:
-        app.logger.warning('connect to scheduler rpc error: %r', e)
-        return json.dumps({"result": False}), 200, {'Content-Type': 'application/json'}
-    return json.dumps({"result": ret}), 200, {'Content-Type': 'application/json'}
+#     try:
+#         ret = rpc.newtask(newtask)
+#     except socket.error as e:
+#         app.logger.warning('connect to scheduler rpc error: %r', e)
+#         return json.dumps({"result": False}), 200, {'Content-Type': 'application/json'}
+#     return json.dumps({"result": ret}), 200, {'Content-Type': 'application/json'}
 
 @app.route('/run', methods=['POST', ])
 def runtask():
