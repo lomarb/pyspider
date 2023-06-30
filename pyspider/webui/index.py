@@ -172,7 +172,7 @@ def dispatchertask():
         },
         "process": {
             "callback": "_on_message",
-        }
+        },
         "schedule": {
             "age": 0,
             "priority": 9,
