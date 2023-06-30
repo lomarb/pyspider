@@ -57,16 +57,16 @@
           <button class="project-create btn btn-default btn-primary" data-toggle="modal" data-target="#create-project-modal">Create</button>
         </div>
 
-        <div style="float: right;margin-right: 10px;" class="">
-          <select name="group" id="groupSelect" class="form-control">
-            
-          </select>
-        </div>
-
         <div class="active-btn-div">
           {% if config.scheduler_rpc is not none %}
             <a class="btn btn-default btn-info" href='/tasks' target=_blank>Recent Active Tasks</a>
           {% endif %}
+        </div>
+
+        <div style="float: left;margin-right: 10px;" class="">
+          <select name="group" id="groupSelect" class="form-control">
+            
+          </select>
         </div>
 
         <div class="modal fade" id="create-project-modal">
