@@ -128,7 +128,7 @@ def counter():
 
 
 @app.route('/dispatcher', methods=['POST', ])
-def runtask():
+def dispatchertask():
     rpc = app.config['scheduler_rpc']
     if rpc is None:
         return json.dumps({})
