@@ -42,6 +42,9 @@ def index():
                       key=lambda k: (0 if k['group'] else 1, k['group'] or '', k['name']))
     return render_template("index.html", projects=projects)
 
+@app.route('/admin')
+def admin():
+    return render_template("admin.html")
 
 @app.route('/queues')
 def get_queues():
