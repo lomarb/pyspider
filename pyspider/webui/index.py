@@ -172,7 +172,7 @@ def dispatchertask():
 
     # newtask = {
     #     # "taskid": md5string(url),
-    #     'taskid': utils.md5string('data:,on_message'),
+    #     'taskid': md5string('data:,on_message'),
     #     "project": project,
     #     # "url": url,
     #     'url': 'data:,on_message',
@@ -190,7 +190,7 @@ def dispatchertask():
     # }
 
     sendtask = {
-        'taskid': utils.md5string('data:,on_message'),
+        'taskid': md5string('data:,on_message'),
         'project': project,
         'url': 'data:,on_message',
         'fetch': {
