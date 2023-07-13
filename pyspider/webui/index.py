@@ -129,6 +129,10 @@ def counter():
 
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
+@app.route('/test', methods=['POST', ])
+def test():
+    value = request.form['value']
+    return f'ok:{value}', 200
 
 @app.route('/dispatcher', methods=['POST', ])
 def dispatchertask():
@@ -166,25 +170,39 @@ def dispatchertask():
             and not login.current_user.is_active():
         return app.login_response
 
-    newtask = {
-        "taskid": md5string(url),
-        "project": project,
-        "url": url,
-        "fetch": {
-            "save": ('__command__', message),
+    # newtask = {
+    #     # "taskid": md5string(url),
+    #     'taskid': utils.md5string('data:,on_message'),
+    #     "project": project,
+    #     # "url": url,
+    #     'url': 'data:,on_message',
+    #     "fetch": {
+    #         "save": ('__command__', message),
+    #     },
+    #     "process": {
+    #         "callback": "_on_message",
+    #     },
+    #     # "schedule": {
+    #     #     "age": 0,
+    #     #     "priority": 9,
+    #     #     "force_update": True,
+    #     # },
+    # }
+
+    sendtask = {
+        'taskid': utils.md5string('data:,on_message'),
+        'project': project,
+        'url': 'data:,on_message',
+        'fetch': {
+            'save': ('__command__', message),
         },
-        "process": {
-            "callback": "_on_message",
-        },
-        "schedule": {
-            "age": 0,
-            "priority": 9,
-            "force_update": True,
-        },
+        'process': {
+            'callback': '_on_message',
+        }
     }
 
     try:
-        ret = rpc.newtask(newtask)
+        ret = rpc.newtask(sendtask)
     except socket.error as e:
         app.logger.warning('connect to scheduler rpc error: %r', e)
         return json.dumps({"result": False}), 200, {'Content-Type': 'application/json'}
