@@ -202,7 +202,9 @@ def dispatchertask():
     }
 
     try:
-        ret = rpc.newtask(sendtask)
+        # send_task
+        # ret = rpc.newtask(sendtask)
+        ret = rpc.send_task(sendtask)
     except socket.error as e:
         app.logger.warning('connect to scheduler rpc error: %r', e)
         return json.dumps({"result": False}), 200, {'Content-Type': 'application/json'}
