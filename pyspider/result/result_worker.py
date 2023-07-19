@@ -9,11 +9,11 @@ import time
 import json
 import logging
 from six.moves import queue as Queue
-from pyspider.within7.Within7 import Within7ResultWorker
+# from pyspider.within7.Within7 import Within7ResultWorker
 logger = logging.getLogger("result")
 
 
-class ResultWorker(Within7ResultWorker):
+class ResultWorker(object):
 
     """
     do with result
@@ -32,10 +32,10 @@ class ResultWorker(Within7ResultWorker):
         if 'taskid' in task and 'project' in task and 'url' in task:
             logger.info('result %s:%s %s -> %.30r' % (
                 task['project'], task['taskid'], task['url'], result))
-            try:
-                self.upload_data_to_s3(task=task, json_data=result)
-            except Exception as e:
-                pass
+            # try:
+            #     self.upload_data_to_s3(task=task, json_data=result)
+            # except Exception as e:
+            #     pass
             return self.resultdb.save(
                 project=task['project'],
                 taskid=task['taskid'],
