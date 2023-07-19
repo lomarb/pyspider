@@ -8,7 +8,7 @@ class Within7ResultWorker:
     secret_key = '/ddek0LZ30UAaRzSsrCIKs4nSRuWKMPlWDHCIy/D'
 
     bucket_name = 'aws-glue-assets-080794739569-us-east-2'  # S3 桶的名称
-    object_name = 'Test_ypp_20230621/Test_S3_V2/Test_ODS/'  # 存储在 S3 中的对象名称（通常以 .json 结尾）
+    object_name = 'Test_ypp_20230621/Test_S3_V2/Test_Pyspider/'  # 存储在 S3 中的对象名称（通常以 .json 结尾）
 
     s3_client = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
 
