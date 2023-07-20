@@ -129,7 +129,7 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
         obj = dict(obj)
         obj['taskid'] = taskid
         obj['project'] = project
-        obj['subproject'] = 'test'
+        # obj['subproject'] = 'test'
         obj['updatetime'] = time.time()
         return self.update(project, taskid, obj=obj)
 
