@@ -84,7 +84,7 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
             return ret
         return self._parse(ret)
 
-    def status_count(self, project):
+    def status_count(self, project, subproject=''):
         if project not in self.projects:
             self._list_project()
         if project not in self.projects:
@@ -105,7 +105,10 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
 
         # Instead of aggregate, use find-count on status(with index) field.
         def _count_for_status(collection, status):
-            total = collection.find({'status': status}).count()
+            sql = {'status': status}
+            if subproject != '':
+                sql = {'status': status, 'subproject': subproject}
+            total = collection.find(sql).count()
             return {'total': total, "_id": status} if total else None
 
         c = self.database[collection_name]

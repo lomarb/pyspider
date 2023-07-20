@@ -128,7 +128,7 @@ class BaseHandler(object):
     """
     crawl_config = {}
     project_name = None
-    sub_project = None
+    sub_project = None  # 根据下单的项目查询
     _cron_jobs = []
     _min_tick = 0
     __env__ = {'not_inited': True}
@@ -322,7 +322,7 @@ class BaseHandler(object):
         task['process'] = process
 
         task['project'] = self.project_name
-        task['subproject'] = self.sub_project
+        task['subproject'] = self.sub_project or ''
         task['url'] = url
         if 'taskid' in kwargs:
             task['taskid'] = kwargs.pop('taskid')
