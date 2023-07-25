@@ -50,6 +50,11 @@ def admin():
     return render_template("admin.html")
 
 
+@app.route('/copy')
+def copy():
+    return render_template("copy.html")
+
+
 @app.route('/db_name/<project>')
 def db_name(project):
     start_cp = CopyProject()
