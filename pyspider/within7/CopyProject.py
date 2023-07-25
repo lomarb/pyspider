@@ -12,5 +12,14 @@ class CopyProject:
 
     def start_copy(self, project_name):
         # self.collection['']
-        tk_code = self.db.get(project_name)
-        print(tk_code)
+        pipeline = [
+            # {"$match": {"result.keyword":{"$eq":"@Frontrunneroutfitters"}}},
+            {"$match": {"result.name": {"$eq": project_name}}},
+        ]
+        # tk_code = self.db.collection.aggregate(pipeline)
+        # print(list(tk_code))
+        # return list(tk_code)
+
+        return self.db.get(project_name)
+
+
