@@ -19,7 +19,7 @@ class CopyProject:
         # tk_code = self.db.collection.aggregate(pipeline)
         # print(list(tk_code))
         # return list(tk_code)
-
-        return self.db.get(project_name)
+        cpdb = self.db.get(project_name)
+        return self.db.insert(f"{project_name}_tpb", cpdb)
 
 
