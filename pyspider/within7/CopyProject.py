@@ -7,6 +7,10 @@ import boto3
 
 from pyspider.database.mongodb.projectdb import ProjectDB
 from pyspider.database.mongodb.resultdb import ResultDB
+from pyspider.database.mongodb.taskdb import TaskDB
+
+access_key = ''
+secret_key = ''
 
 
 class CopyProject:
@@ -15,8 +19,22 @@ class CopyProject:
         url = 'mongodb://root:8a2p9j3x9g@3.134.227.240/projectdb?authSource=admin'
         self.db = ProjectDB(url, database='projectdb')
         self.result_db = ResultDB(url)
+        self.task_db = TaskDB(url)
 
+    # 查询任务进行情况
+    def find_task_process(self, collection_name):
+        cursor = list(self.task_db.database[collection_name].find())
+        results = []
+        documents = [doc for doc in cursor]
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])  # Convert ObjectId to string
+            results.append(doc)
+
+        return results
+
+    # object_name 存路径
     def save_result_to_s3(self, collection_name, object_name, keyword):
+        bucket_name = ''
         cursor = list(self.result_db.database[collection_name].find())
         # data = list(collection.aggregate(pipeline))
         print('data', len(cursor), cursor)
@@ -41,7 +59,6 @@ class CopyProject:
             print(f"数据已成功打包并上传到S3桶 {bucket_name} 中，保存为对象 {object_name}")
         except Exception as e:
             print(f"上传数据到S3时出现错误：{e}")
-
 
     @staticmethod
     def replace_script(script, p_name):
@@ -113,8 +130,3 @@ class CopyProject:
         }
         ret = self.db.update(project, update)
         return {'count': str(ret)}
-
-
-
-
-
