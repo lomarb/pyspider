@@ -36,12 +36,14 @@ def utf8(string):
     else:
         return six.text_type(string).encode('utf8')
 
+
 @app.route('/')
 def index():
     projectdb = app.config['projectdb']
     projects = sorted(projectdb.get_all(fields=index_fields),
                       key=lambda k: (0 if k['group'] else 1, k['group'] or '', k['name']))
     return render_template("index.html", projects=projects)
+
 
 @app.route('/admin')
 def admin():
@@ -54,6 +56,23 @@ def db_name(project):
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
     result = start_cp.start_copy(project)
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
+
+
+@app.route('/start_new_project/<project_name>')
+def start_new_project(project_name):
+    start_cp = CopyProject()
+    # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
+    result = start_cp.ready_project(project_name)
+    return json.dumps(result), 200, {'Content-Type': 'application/json'}
+
+
+# 删除项目表
+@app.route('/del_project/<project>')
+def del_project(project):
+    start_cp = CopyProject()
+    # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
+    result = start_cp.db.drop(project)
+    return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
 
 
 @app.route('/queues')
@@ -139,10 +158,12 @@ def counter():
 
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
+
 @app.route('/test', methods=['POST', ])
 def test():
     value = request.form['value']
     return f'ok:{value}', 200
+
 
 @app.route('/dispatcher', methods=['POST', ])
 def dispatchertask():
@@ -152,23 +173,23 @@ def dispatchertask():
 
     projectdb = app.config['projectdb']
 
-    project = request.form['project']   # 项目文件名称
-    key = request.form['key']           # 不同项目需要传入的参数
-    keyword = request.form['keyword']   # 传入的搜索词
-    url = request.form['url']   # 传入的url唯一值
+    project = request.form['project']  # 项目文件名称
+    key = request.form['key']  # 不同项目需要传入的参数
+    keyword = request.form['keyword']  # 传入的搜索词
+    url = request.form['url']  # 传入的url唯一值
 
     if not project:
         return "no such request project.", 404
-    
+
     if not url:
         return "no such request url.", 404
 
     if not key:
         return "no such request key.", 404
-    
+
     if not keyword:
         return "no such request keyword.", 404
-    
+
     message = {
         key: keyword
     }
@@ -219,6 +240,7 @@ def dispatchertask():
         app.logger.warning('connect to scheduler rpc error: %r', e)
         return json.dumps({"result": False}), 200, {'Content-Type': 'application/json'}
     return json.dumps({"result": ret}), 200, {'Content-Type': 'application/json'}
+
 
 @app.route('/run', methods=['POST', ])
 def runtask():
