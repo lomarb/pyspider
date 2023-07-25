@@ -22,6 +22,7 @@ class CopyProject:
         # return list(tk_code)
         cpdb = self.db.get(project)
         print(cpdb, type(cpdb))
-        return self.db.insert(f"{project_name}", cpdb)
+        return cpdb
+        # return self.db.insert(f"{project_name}", cpdb)
 
 
