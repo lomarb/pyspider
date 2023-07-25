@@ -21,7 +21,7 @@ class CopyProject:
         # print(list(tk_code))
         # return list(tk_code)
         cpdb = self.db.get(project)
-        del cpdb['_id']
+        print(cpdb, type(cpdb))
         return self.db.insert(f"{project_name}", cpdb)
 
 
