@@ -1,5 +1,6 @@
 # 每次启动项目，将代码拷贝一份作为启动项目的执行代码
 #
+import time
 
 from pyspider.database.mongodb.projectdb import ProjectDB
 
@@ -22,7 +23,14 @@ class CopyProject:
         # return list(tk_code)
         cpdb = self.db.get(project)
         print(cpdb, type(cpdb))
-        return cpdb
+        # return cpdb
+        script = cpdb['script']
+        cpdb['script'] = script.replace(project, project_name)
+        cpdb['temp_name'] = p_name
+        cpdb['updatetime'] = time.time()
+        cpdb['status'] = 'TODO'
+
+        return self.db.collection.insert_one()
         # return self.db.insert(f"{project_name}", cpdb)
 
 
