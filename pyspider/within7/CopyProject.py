@@ -40,8 +40,7 @@ class CopyProject:
 
     # 清除完成的任务
     def drop_project(self, name):
-        del_result = self.db.collection.remove({'temp_name': name})
-        return {"res": str(del_result)}
+        return self.db.collection.remove({'temp_name': name})
 
     def start_copy(self, project_name):
         # self.collection['']
