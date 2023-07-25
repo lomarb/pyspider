@@ -20,7 +20,8 @@ class CopyProject:
         ]
         for s in origin_script_arr:
             script = script.replace(f'class {s}(BaseHandler)', f'class {s}_{p_name}(BaseHandler)')
-            script = script.replace(f"self.send_message('{s}'", f"self.send_message('{s}_{p_name}'")
+            script = script.replace(f"self.send_message('{s}'", f'self.send_message("{s}_{p_name}"')
+            script = script.replace(f'self.send_message("{s}"', f'self.send_message("{s}_{p_name}"')
 
         return script
 
@@ -36,6 +37,10 @@ class CopyProject:
             temp = self.start_copy(f"{media}_{p_name}")
             results.append(temp)
         return results
+
+    # 清除完成的任务
+    def drop_project(self, name):
+        return self.db.collection.remove({'temp_name': name})
 
     def start_copy(self, project_name):
         # self.collection['']
