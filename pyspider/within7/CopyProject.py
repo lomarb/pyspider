@@ -34,5 +34,5 @@ class CopyProject:
         insert_res = self.db.collection.update_one({"name": project_name}, {"$set": cpdb}, upsert=True)
         # res = insert_res.inserted_id
         # insert_res.upserted_id
-        return {'count': insert_res.modified_count, 'res': insert_res.raw_result}
+        return {'count': insert_res.modified_count, 'res': str(insert_res.raw_result)}
         # return self.db.insert(f"{project_name}", cpdb)
