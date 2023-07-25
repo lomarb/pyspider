@@ -29,6 +29,7 @@ class CopyProject:
         cpdb['temp_name'] = p_name
         cpdb['updatetime'] = time.time()
         cpdb['status'] = 'TODO'
+        cpdb['name'] = project_name
 
         return self.db.collection.insert_one(cpdb)
         # return self.db.insert(f"{project_name}", cpdb)
