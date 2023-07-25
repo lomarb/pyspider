@@ -14,9 +14,13 @@ class CopyProject:
     @staticmethod
     def replace_script(script, p_name):
         origin_script_arr = [
-            'ScrapingTikTokPostsByCharles',
-            'ScrapingTikTokUserInfoByUniqueId',
-            'ScrapingTikTokUserPostsByUniqueId',
+            # 'ScrapingTikTokPostsByCharles',
+            # 'ScrapingTikTokUserInfoByUniqueId',
+            # 'ScrapingTikTokUserPostsByUniqueId',
+
+            'ScrapingYoutubeVideosByKeywordsV001',
+            'ScrapingYoutubeVideoDetailsByVideoId',
+            'ScrapingYoutubeChannelAboutByChannelUrl'
         ]
         for s in origin_script_arr:
             script = script.replace(f'class {s}(BaseHandler)', f'class {s}_{p_name}(BaseHandler)')
@@ -28,9 +32,13 @@ class CopyProject:
     # 准备拷贝新的项目
     def ready_project(self, p_name):
         media_arr = [
-            'ScrapingTikTokPostsByCharles',
-            'ScrapingTikTokUserInfoByUniqueId',
-            'ScrapingTikTokUserPostsByUniqueId',
+            # 'ScrapingTikTokPostsByCharles',
+            # 'ScrapingTikTokUserInfoByUniqueId',
+            # 'ScrapingTikTokUserPostsByUniqueId',
+
+            'ScrapingYoutubeVideosByKeywordsV001',
+            'ScrapingYoutubeVideoDetailsByVideoId',
+            'ScrapingYoutubeChannelAboutByChannelUrl'
         ]
         results = []
         for media in media_arr:
