@@ -1,8 +1,12 @@
 # 每次启动项目，将代码拷贝一份作为启动项目的执行代码
 #
+import json
 import time
+import gzip
+import boto3
 
 from pyspider.database.mongodb.projectdb import ProjectDB
+from pyspider.database.mongodb.resultdb import ResultDB
 
 
 class CopyProject:
@@ -10,6 +14,34 @@ class CopyProject:
     def __init__(self):
         url = 'mongodb://root:8a2p9j3x9g@3.134.227.240/projectdb?authSource=admin'
         self.db = ProjectDB(url, database='projectdb')
+        self.result_db = ResultDB(url)
+
+    def save_result_to_s3(self, collection_name, object_name, keyword):
+        cursor = list(self.result_db.database[collection_name].find())
+        # data = list(collection.aggregate(pipeline))
+        print('data', len(cursor), cursor)
+        res_str = ''
+        # 将数据转换为JSON字符串
+        documents = [doc for doc in cursor]
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])  # Convert ObjectId to string
+            res_str += json.dumps(doc, default=str) + '\n'
+        # Serialize the list of documents to JSON
+        # json_string = json.dumps(documents, default=str)
+
+        # 使用gzip进行压缩
+        # compressed_data = gzip.compress(json_string.encode('utf-8'))
+        compressed_data = gzip.compress(res_str.encode('utf-8'))
+
+        # 将压缩后的数据上传到S3
+        s3_client = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
+        try:
+            response = s3_client.put_object(Body=compressed_data, Bucket=bucket_name, Key=object_name)
+            print('response', response)
+            print(f"数据已成功打包并上传到S3桶 {bucket_name} 中，保存为对象 {object_name}")
+        except Exception as e:
+            print(f"上传数据到S3时出现错误：{e}")
+
 
     @staticmethod
     def replace_script(script, p_name):
