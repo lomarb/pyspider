@@ -10,6 +10,7 @@ import hashlib
 import six
 from six import iteritems, itervalues
 from flask import render_template, request, json
+from pyspider.within7.CopyProject import CopyProject
 
 try:
     import flask_login as login
@@ -45,6 +46,15 @@ def index():
 @app.route('/admin')
 def admin():
     return render_template("admin.html")
+
+
+@app.route('/db_name/<project>')
+def db_name(project):
+    start_cp = CopyProject()
+    # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
+    result = start_cp.start_copy(project)
+    return json.dumps(result), 200, {'Content-Type': 'application/json'}
+
 
 @app.route('/queues')
 def get_queues():
