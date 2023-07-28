@@ -2,11 +2,14 @@ import json
 import boto3
 import gzip
 
+with open('/opt/pyspider/access_key') as f:
+    access_key = f.read()
+
+with open('/opt/pyspider/secret_key') as f:
+    secret_key = f.read()
+
 
 class Within7ResultWorker:
-    access_key = 'AKIARFT554NYY6SITBXU'
-    secret_key = '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'
-
     bucket_name = 'aws-glue-assets-080794739569-us-east-2'  # S3 桶的名称
     object_name = 'Test_ypp_20230621/Test_S3_V2/Test_Pyspider'  # 存储在 S3 中的对象名称（通常以 .json 结尾）
 

@@ -8,9 +8,55 @@ import boto3
 from pyspider.database.mongodb.projectdb import ProjectDB
 from pyspider.database.mongodb.resultdb import ResultDB
 from pyspider.database.mongodb.taskdb import TaskDB
+import redis
 
-access_key = ''
-secret_key = ''
+bucket_name = 'test-ypp0711-lambda-bucket'  # S3桶的名称
+
+with open('/opt/pyspider/access_key') as f:
+    access_key = f.read()
+
+with open('/opt/pyspider/secret_key') as f:
+    secret_key = f.read()
+
+
+# 获取每个媒体下面的需要替换的代码
+class ReplaceProject:
+    media_dict_arr = {
+        "ins": [],
+        "twitter": [
+            'ScrapingTwitterPostsByTagsV001'
+        ],
+        "facebook": [
+            'ScrapingFacebookPageIdBykeywords',
+            'ScrapingFacebookAdsByPageIdV001',
+        ],
+        "google": [
+            'ScrapingGoogleIndexDispatcher',
+            'ScrapingGoogleIndex'
+        ],
+        "tiktok": [
+            'ScrapingTikTokPostsByCharles',
+            'ScrapingTikTokUserInfoByUniqueId',
+            'ScrapingTikTokUserPostsByUniqueId',
+        ],
+        "reddit": [
+            'ScrapingRedditPostsByKeywords',
+        ],
+        "youtube": [
+            'ScrapingYoutubeVideosByKeywordsV001',
+            'ScrapingYoutubeVideoDetailsByVideoId',
+            'ScrapingYoutubeChannelAboutByChannelUrl'
+        ],
+    }
+
+    youtube = media_dict_arr.get('youtube', [])
+    twitter = media_dict_arr.get('twitter', [])
+    facebook = media_dict_arr.get('facebook', [])
+    google = media_dict_arr.get('google', [])
+    tiktok = media_dict_arr.get('tiktok', [])
+
+    def __init__(self):
+        pass
 
 
 class CopyProject:
@@ -20,6 +66,14 @@ class CopyProject:
         self.db = ProjectDB(url, database='projectdb')
         self.result_db = ResultDB(url)
         self.task_db = TaskDB(url)
+
+        REDIS_URL = 'redis://3.134.227.240:6379/{db}'
+        self.rd_db = redis.Redis.from_url(REDIS_URL.format(db=6), decode_responses=True, encoding='utf-8')
+
+    # 任务存入redis p_name为项目名称 {"ins": "key1,key2", "tw": "key1", "tk": "key1"}
+    def create_new_project(self, p_name, keywords_dict):
+        self.rd_db.hset('project:task', p_name, keywords_dict)
+        # self.rd_db.hget('project:task', 'www')
 
     # 查询任务进行情况
     def find_task_process(self, collection_name):
@@ -34,7 +88,6 @@ class CopyProject:
 
     # object_name 存路径
     def save_result_to_s3(self, collection_name, object_name, keyword):
-        bucket_name = ''
         cursor = list(self.result_db.database[collection_name].find())
         # data = list(collection.aggregate(pipeline))
         print('data', len(cursor), cursor)
@@ -62,16 +115,8 @@ class CopyProject:
 
     @staticmethod
     def replace_script(script, p_name):
-        origin_script_arr = [
-            # 'ScrapingTikTokPostsByCharles',
-            # 'ScrapingTikTokUserInfoByUniqueId',
-            # 'ScrapingTikTokUserPostsByUniqueId',
-
-            'ScrapingYoutubeVideosByKeywordsV001',
-            'ScrapingYoutubeVideoDetailsByVideoId',
-            'ScrapingYoutubeChannelAboutByChannelUrl'
-        ]
-        for s in origin_script_arr:
+        media_arr = ReplaceProject.youtube()
+        for s in media_arr:
             script = script.replace(f'class {s}(BaseHandler)', f'class {s}_{p_name}(BaseHandler)')
             script = script.replace(f"self.send_message('{s}'", f'self.send_message("{s}_{p_name}"')
             script = script.replace(f'self.send_message("{s}"', f'self.send_message("{s}_{p_name}"')
@@ -80,15 +125,8 @@ class CopyProject:
 
     # 准备拷贝新的项目
     def ready_project(self, p_name):
-        media_arr = [
-            # 'ScrapingTikTokPostsByCharles',
-            # 'ScrapingTikTokUserInfoByUniqueId',
-            # 'ScrapingTikTokUserPostsByUniqueId',
+        media_arr = ReplaceProject.youtube
 
-            'ScrapingYoutubeVideosByKeywordsV001',
-            'ScrapingYoutubeVideoDetailsByVideoId',
-            'ScrapingYoutubeChannelAboutByChannelUrl'
-        ]
         results = []
         for media in media_arr:
             temp = self.start_copy(f"{media}_{p_name}")
