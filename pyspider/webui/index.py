@@ -55,11 +55,15 @@ def copy():
     return render_template("copy.html")
 
 
-@app.route('/db_name/<project>')
-def db_name(project):
+@app.route('/db_name', methods=['POST', ])
+def db_name():
     start_cp = CopyProject()
+
+    project = request.form['project']  # 项目文件名称
+    media = request.form['media']  # 项目文件名称
+
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
-    result = start_cp.start_copy(project)
+    result = start_cp.start_copy(project, media)
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
 
