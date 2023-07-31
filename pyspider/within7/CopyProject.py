@@ -54,9 +54,16 @@ class ReplaceProject:
     facebook = media_dict_arr.get('facebook', [])
     google = media_dict_arr.get('google', [])
     tiktok = media_dict_arr.get('tiktok', [])
+    reddit = media_dict_arr.get('reddit', [])
 
     def __init__(self):
         pass
+
+    def get_media(self, media):
+        return self.media_dict_arr.get(media, [])
+
+
+rp_project = ReplaceProject()
 
 
 class CopyProject:
@@ -114,8 +121,8 @@ class CopyProject:
             print(f"上传数据到S3时出现错误：{e}")
 
     @staticmethod
-    def replace_script(script, p_name):
-        media_arr = ReplaceProject.youtube()
+    def replace_script(script, p_name, media):
+        media_arr = rp_project.get_media(media)
         for s in media_arr:
             script = script.replace(f'class {s}(BaseHandler)', f'class {s}_{p_name}(BaseHandler)')
             script = script.replace(f"self.send_message('{s}'", f'self.send_message("{s}_{p_name}"')
@@ -124,12 +131,15 @@ class CopyProject:
         return script
 
     # 准备拷贝新的项目
-    def ready_project(self, p_name):
-        media_arr = ReplaceProject.youtube
+    def ready_project(self, p_name, media=None):
+        media_arr = rp_project.youtube
+
+        if media:
+            media_arr = rp_project.get_media(media)
 
         results = []
         for media in media_arr:
-            temp = self.start_copy(f"{media}_{p_name}")
+            temp = self.start_copy(f"{media}_{p_name}", media)
             results.append(temp)
         return results
 
@@ -137,7 +147,7 @@ class CopyProject:
     def drop_project(self, name):
         return self.db.collection.remove({'temp_name': name})
 
-    def start_copy(self, project_name):
+    def start_copy(self, project_name, media):
         # self.collection['']
         project, p_name = project_name.split('_')
         pipeline = [
@@ -151,7 +161,7 @@ class CopyProject:
         print(cpdb, type(cpdb))
         # return cpdb
         script = cpdb['script']
-        cpdb['script'] = self.replace_script(script, p_name)
+        cpdb['script'] = self.replace_script(script, p_name, media)
         cpdb['temp_name'] = p_name
         cpdb['group'] = p_name
         cpdb['updatetime'] = time.time()

@@ -67,7 +67,11 @@ def db_name(project):
 def start_new_project(project_name):
     start_cp = CopyProject()
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
-    result = start_cp.ready_project(project_name)
+    media = request.form['media']  # 项目文件名称
+    if media is None or media == '':
+        return json.dumps({"msg": "请传入media", "code": 101}), 200, {'Content-Type': 'application/json'}
+
+    result = start_cp.ready_project(project_name, media)
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
 
@@ -76,6 +80,7 @@ def start_new_project(project_name):
 def del_project(project):
     start_cp = CopyProject()
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
+
     result = start_cp.drop_project(project)
     return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
 
