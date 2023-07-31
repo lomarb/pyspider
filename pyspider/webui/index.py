@@ -55,24 +55,25 @@ def copy():
     return render_template("copy.html")
 
 
-@app.route('/db_name', methods=['POST', ])
+@app.route('/db_name')
 def db_name():
     start_cp = CopyProject()
 
-    project = request.form['project']  # 项目文件名称
-    media = request.form['media']  # 项目文件名称
-
+    project = request.args.get('project', "")
+    media = request.args.get('media', "")
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
     result = start_cp.start_copy(project, media)
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
 
-@app.route('/start_new_project', methods=['POST', ])
+@app.route('/start_new_project')
 def start_new_project():
     start_cp = CopyProject()
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
-    project_name = request.form['project_name']  # 项目文件名称
-    media = request.form['media']  # 项目文件名称
+
+    project_name = request.args.get('project_name', "")
+    media = request.args.get('media', "")
+
     if media is None or media == '':
         return json.dumps({"msg": "请传入media", "code": 101}), 200, {'Content-Type': 'application/json'}
 
