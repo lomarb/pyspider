@@ -63,10 +63,11 @@ def db_name(project):
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
 
-@app.route('/start_new_project/<project_name>')
-def start_new_project(project_name):
+@app.route('/start_new_project', methods=['POST', ])
+def start_new_project():
     start_cp = CopyProject()
     # result = start_cp.start_copy('ScrapingTikTokPostsByCharles')
+    project_name = request.form['project_name']  # 项目文件名称
     media = request.form['media']  # 项目文件名称
     if media is None or media == '':
         return json.dumps({"msg": "请传入media", "code": 101}), 200, {'Content-Type': 'application/json'}
