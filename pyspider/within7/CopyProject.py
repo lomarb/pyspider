@@ -140,8 +140,8 @@ class CopyProject:
             media_arr = rp_project.get_media(media)
 
         results = []
-        for media in media_arr:
-            temp = self.start_copy(f"{media}_{p_name}", media)
+        for m in media_arr:
+            temp = self.start_copy(f"{m}_{p_name}", media)
             results.append(temp)
         return results
 
