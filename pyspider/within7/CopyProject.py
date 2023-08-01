@@ -127,6 +127,8 @@ class CopyProject:
             script = script.replace(f'class {s}(BaseHandler)', f'class {s}_{p_name}(BaseHandler)')
             script = script.replace(f"self.send_message('{s}'", f'self.send_message("{s}_{p_name}"')
             script = script.replace(f'self.send_message("{s}"', f'self.send_message("{s}_{p_name}"')
+            script = script.replace(f'"{s}"', f'"{s}_{p_name}"')
+            script = script.replace(f"'{s}'", f"'{s}_{p_name}'")
         if len(media_arr) == 0:
             script = f'# error:{media}-{p_name}'
 
