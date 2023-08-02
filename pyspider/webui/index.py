@@ -56,17 +56,17 @@ def copy():
     return render_template("copy.html")
 
 
-@app.route('/get_feishu_app_token')
-def get_feishu_app_token():
-    return fetch_url(f'{js_host}/feishuAppToken')
-
-
-@app.route('/get_feishu_excel')
-def get_feishu_excel():
-    token = request.args.get('token', "")
-    sheet_token = request.args.get('sheetToken', "")
-    sheet_ids = request.args.get('sheetIDStr', "")
-    return fetch_url(f'{js_host}/feishuExcel?token={token}&sheetToken={sheet_token}&sheetIDStr={sheet_ids}')
+# @app.route('/get_feishu_app_token')
+# def get_feishu_app_token():
+#     return fetch_url(f'{js_host}/feishuAppToken')
+#
+#
+# @app.route('/get_feishu_excel')
+# def get_feishu_excel():
+#     token = request.args.get('token', "")
+#     sheet_token = request.args.get('sheetToken', "")
+#     sheet_ids = request.args.get('sheetIDStr', "")
+#     return fetch_url(f'{js_host}/feishuExcel?token={token}&sheetToken={sheet_token}&sheetIDStr={sheet_ids}')
 
 
 @app.route('/db_name')
