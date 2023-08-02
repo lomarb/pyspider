@@ -185,6 +185,32 @@ class CopyProject:
         return {'count': str(ret)}
 
 
+def send_request(url, method='GET', headers=None, data=None):
+    http_client = tornado.httpclient.HTTPClient()
+    res_data = None
+    err = None
+    try:
+        request = tornado.httpclient.HTTPRequest(
+            url=url,
+            method=method,
+            headers=headers,
+            body=data
+        )
+        res_data = http_client.fetch(request)
+    except tornado.httpclient.HTTPError as e:
+        print("Error:", e)
+        err = e
+    except Exception as e:
+        print("Error:", e)
+        err = e
+    finally:
+        http_client.close()
+        if res_data is not None:
+            return res_data.body
+        else:
+            return {"err": str(err)}
+
+
 def fetch_url(url):
     http_client = tornado.httpclient.HTTPClient()
     res_data = None
@@ -205,6 +231,3 @@ def fetch_url(url):
             return res_data.body
         else:
             return str(err)
-
-
-

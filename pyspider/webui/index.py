@@ -10,7 +10,8 @@ import hashlib
 import six
 from six import iteritems, itervalues
 from flask import render_template, request, json
-from pyspider.within7.CopyProject import CopyProject, fetch_url
+from pyspider.within7.CopyProject import CopyProject, fetch_url, send_request
+import time
 
 try:
     import flask_login as login
@@ -58,8 +59,12 @@ def copy():
 
 @app.route('/get_feishu_app_token')
 def get_feishu_app_token():
-    return fetch_url(f'{js_host}/feishuAppToken')
-
+    data = json.dumps({
+      "app_id": "cli_a4250ac151bd500c",
+      "app_secret": "75LXpuQaXoWUtJZDTndynhBGcoZhtZMq"
+    })
+    res = send_request(f'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal?timestamp={int(time.time()*1000)}', data=data)
+    return res
 
 @app.route('/get_feishu_excel')
 def get_feishu_excel():
