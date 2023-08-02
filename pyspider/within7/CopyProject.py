@@ -188,18 +188,23 @@ class CopyProject:
 def fetch_url(url):
     http_client = tornado.httpclient.HTTPClient()
     res_data = None
+    err = None
     try:
         response = http_client.fetch(url)
         # response.body
         res_data = response
     except tornado.httpclient.HTTPError as e:
         print("Error:", e)
-        res_data = e
+        err = e
     except Exception as e:
         print("Error:", e)
-        res_data = e
+        err = e
     finally:
         http_client.close()
-        return res_data
+        if res_data is not None:
+            return res_data.body
+        else:
+            return str(err)
+
 
 
