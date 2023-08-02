@@ -4,7 +4,8 @@ import json
 import time
 import gzip
 import boto3
-
+import tornado.ioloop
+import tornado.httpclient
 from pyspider.database.mongodb.projectdb import ProjectDB
 from pyspider.database.mongodb.resultdb import ResultDB
 from pyspider.database.mongodb.taskdb import TaskDB
@@ -182,3 +183,23 @@ class CopyProject:
         }
         ret = self.db.update(project, update)
         return {'count': str(ret)}
+
+
+def fetch_url(url):
+    http_client = tornado.httpclient.HTTPClient()
+    res_data = None
+    try:
+        response = http_client.fetch(url)
+        # response.body
+        res_data = response
+    except tornado.httpclient.HTTPError as e:
+        print("Error:", e)
+        res_data = e
+    except Exception as e:
+        print("Error:", e)
+        res_data = e
+    finally:
+        http_client.close()
+        return res_data
+
+

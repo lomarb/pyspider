@@ -10,7 +10,7 @@ import hashlib
 import six
 from six import iteritems, itervalues
 from flask import render_template, request, json
-from pyspider.within7.CopyProject import CopyProject
+from pyspider.within7.CopyProject import CopyProject, fetch_url
 
 try:
     import flask_login as login
@@ -22,6 +22,7 @@ from .app import app
 index_fields = ['name', 'group', 'status', 'comments', 'rate', 'burst', 'updatetime']
 md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
 
+js_host = 'http://3.15.15.192:3000'
 
 def utf8(string):
     """
@@ -53,6 +54,19 @@ def admin():
 @app.route('/copy')
 def copy():
     return render_template("copy.html")
+
+
+@app.route('/get_feishu_app_token')
+def get_feishu_app_token():
+    return fetch_url(f'{js_host}/feishuAppToken')
+
+
+@app.route('/get_feishu_excel')
+def get_feishu_app_token():
+    token = request.args.get('token', "")
+    sheet_token = request.args.get('sheetToken', "")
+    sheet_ids = request.args.get('sheetIDStr', "")
+    return fetch_url(f'{js_host}/feishuExcel?token={token}&sheetToken={sheet_token}&sheetIDStr={sheet_ids}')
 
 
 @app.route('/db_name')
