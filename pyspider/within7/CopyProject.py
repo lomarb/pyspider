@@ -184,6 +184,21 @@ class CopyProject:
         ret = self.db.update(project, update)
         return {'count': str(ret)}
 
+    # 查询拿到数据的项目
+    def get_spider_data(self, project):
+        db_task = []
+        for media_key in rp_project.media_dict_arr:
+            collection = rp_project.media_dict_arr[media_key]
+            for c in collection:
+                collection_name = f"{c}_{project}"
+                if collection_name in self.result_db.database.list_collection_names():
+                    print(f"'{collection_name}' exists.")
+                    db_task.append(f"'{collection_name}' exists.")
+                else:
+                    print(f"'{collection_name}' not exists.")
+                    db_task.append(f"'{collection_name}' not exists.")
+        return db_task
+
 
 def send_request(url, method='GET', headers=None, data=None):
     http_client = tornado.httpclient.HTTPClient()
@@ -208,7 +223,7 @@ def send_request(url, method='GET', headers=None, data=None):
         if res_data is not None:
             return res_data.body
         else:
-            return {"err": str(err)}
+            return json.dumps({"err": str(err)})
 
 
 def fetch_url(url):
