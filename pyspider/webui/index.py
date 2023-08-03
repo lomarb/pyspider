@@ -25,6 +25,7 @@ md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
 
 js_host = 'http://3.15.15.192:3000'
 
+
 def utf8(string):
     """
     Make sure string is utf8 encoded bytes.
@@ -57,21 +58,31 @@ def copy():
     return render_template("copy.html")
 
 
+# 飞书相关接口
 @app.route('/get_feishu_app_token')
 def get_feishu_app_token():
     data = json.dumps({
-      "app_id": "cli_a4250ac151bd500c",
-      "app_secret": "75LXpuQaXoWUtJZDTndynhBGcoZhtZMq"
+        "app_id": "cli_a4250ac151bd500c",
+        "app_secret": "75LXpuQaXoWUtJZDTndynhBGcoZhtZMq"
     })
-    res = send_request(f'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal?timestamp={int(time.time()*1000)}', data=data)
+    res = send_request(
+        f'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal?timestamp={int(time.time() * 1000)}',
+        data=data)
     return res
+
 
 @app.route('/get_feishu_excel')
 def get_feishu_excel():
     token = request.args.get('token', "")
     sheet_token = request.args.get('sheetToken', "")
-    sheet_ids = request.args.get('sheetIDStr', "")
-    return fetch_url(f'{js_host}/feishuExcel?token={token}&sheetToken={sheet_token}&sheetIDStr={sheet_ids}')
+    sheet_ranges = request.args.get('sheetIDStr', "")
+    headers = {
+        'Authorization': f'Bearer {token}',
+    }
+    res = send_request(
+        f'https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{sheet_token}/values_batch_get?ranges={sheet_ranges}&valueRenderOption=ToString&dateTimeRenderOption=FormattedString',
+        headers=headers)
+    return res
 
 
 @app.route('/db_name')
