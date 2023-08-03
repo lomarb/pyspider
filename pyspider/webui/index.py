@@ -66,6 +66,7 @@ def get_feishu_app_token():
         "app_secret": "75LXpuQaXoWUtJZDTndynhBGcoZhtZMq"
     })
     headers = {
+        'Content-Type': 'application/json'
     }
     res = send_request(
         f'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal?timestamp={int(time.time() * 1000)}',
