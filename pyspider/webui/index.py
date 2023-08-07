@@ -126,6 +126,24 @@ def del_project(project):
     return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
 
 
+# 获取所有项目
+@app.route('/all_project')
+def all_project():
+    start_cp = CopyProject()
+    result = start_cp.get_distinct_project()
+    return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
+
+
+# 获取项目名下所有爬虫文件
+@app.route('/get_project/<project>')
+def get_project(project):
+    start_cp = CopyProject()
+    result = start_cp.get_project_by_project(project)
+    return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
+
+
+# ------------------------------------- 按项目抓取结束
+
 @app.route('/queues')
 def get_queues():
     def try_get_qsize(queue):

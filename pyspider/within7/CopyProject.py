@@ -152,6 +152,16 @@ class CopyProject:
     def drop_project(self, name):
         return self.db.collection.remove({'temp_name': name})
 
+    # 查询当前所有项目
+    def get_distinct_project(self):
+        return self.db.collection.distinct('temp_name')
+
+    # 查询当前项目下面的爬虫文件
+    def get_project_by_project(self, temp_name):
+        data_list = list(self.db.collection.find({"temp_name": temp_name}))
+        return data_list
+
+    # 拷贝项目
     def start_copy(self, project_name, media):
         # self.collection['']
         project, p_name = project_name.split('_')
@@ -198,6 +208,24 @@ class CopyProject:
                     print(f"'{collection_name}' not exists.")
                     db_task.append(f"'{collection_name}' not exists.")
         return db_task
+
+    def notify_status_to_s3(self):
+        # 创建一个 Step Functions 客户端
+        client = boto3.client('stepfunctions')
+        # 定义输入参数
+        input_params = {
+            'project': 'ridge',
+            'tables': 'ScrapingFacebookAdsByPageIdV001,ScrapingFacebookPageIdBykeywords,ScrapingRedditPostsByKeywords,ScrapingTwitterPostsByTagsV001,ScrapingYoutubeChannelAboutByChannelUrl,ScrapingYoutubeVideoDetailsByVideoId,ScrapingYoutubeVideosByKeywordsV001'
+        }
+        # 将参数转换为 JSON 格式
+        input_str = json.dumps(input_params)
+        # 启动新的状态机执行
+        response = client.start_execution(
+            stateMachineArn='arn:aws:states:us-east-2:080794739569:stateMachine:LambdaStateMachine',
+            input=input_str
+        )
+        # 打印出响应
+        print(response)
 
 
 def send_request(url, method='GET', headers=None, data=None):
