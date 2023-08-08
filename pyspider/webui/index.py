@@ -143,10 +143,11 @@ def get_project(project):
 
 
 # 接收处理aws的sns订阅消息
-@app.route('/app/aws_sns', methods=['POST', ])
+@app.route('/aws_sns', methods=['POST', ])
 def aws_sns():
     # value = request.get_data()
-    SubscribeURL = request.form['SubscribeURL']
+    # SubscribeURL = request.form['SubscribeURL']
+    SubscribeURL = request.data
     print('val', SubscribeURL, type(SubscribeURL))
     return json.dumps({"result": SubscribeURL}), 200, {'Content-Type': 'application/json'}
 
