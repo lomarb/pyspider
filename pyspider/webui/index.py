@@ -153,7 +153,7 @@ def aws_sns():
     payload = json.dumps({
         "msg_type": "text",
         "content": {
-            "text": str(data)
+            "text": SubscribeURL
             # "text": str(data.to_dict(flat=False))
         }
     })
