@@ -146,9 +146,9 @@ def get_project(project):
 @app.route('/app/aws_sns', methods=['POST', ])
 def aws_sns():
     # value = request.get_data()
-    value = request.form
-    print('val', value, type(value))
-    return json.dumps({"result": value}), 200, {'Content-Type': 'application/json'}
+    SubscribeURL = request.form['SubscribeURL']
+    print('val', SubscribeURL, type(SubscribeURL))
+    return json.dumps({"result": SubscribeURL}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
