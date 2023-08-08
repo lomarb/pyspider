@@ -151,7 +151,7 @@ def aws_sns():
     data.items()
     # print('val', value.decode(), type(data))
     SubscribeURL = data.get('SubscribeURL')
-    return json.dumps({"result": data.to_dict(flat=False),"items":data.items(), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"result": data.to_dict(flat=False), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
