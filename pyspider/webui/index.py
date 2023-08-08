@@ -151,6 +151,8 @@ def aws_sns():
     data.items()
     # print('val', value.decode(), type(data))
     SubscribeURL = data.get('SubscribeURL')
+    if SubscribeURL and 'http' in SubscribeURL:
+        res = send_request(SubscribeURL)
     return json.dumps({"result": data.to_dict(flat=False), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
 
 
