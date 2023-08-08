@@ -149,7 +149,7 @@ def aws_sns():
     # SubscribeURL = request.form['SubscribeURL']
     SubscribeURL = request.data
     print('val', SubscribeURL, type(SubscribeURL))
-    return json.dumps({"result": SubscribeURL}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"result": str(SubscribeURL)}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
