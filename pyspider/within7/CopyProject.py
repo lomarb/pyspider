@@ -159,7 +159,11 @@ class CopyProject:
     # 查询当前项目下面的爬虫文件
     def get_project_by_project(self, temp_name):
         data_list = list(self.db.collection.find({"temp_name": temp_name}))
-        return data_list
+        res_list = []
+        for doc in data_list:
+            doc['_id'] = str(doc['_id'])
+            res_list.append(doc)
+        return res_list
 
     # 拷贝项目
     def start_copy(self, project_name, media):

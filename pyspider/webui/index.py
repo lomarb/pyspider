@@ -142,6 +142,15 @@ def get_project(project):
     return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
 
+# 接收处理aws的sns订阅消息
+@app.route('/app/aws_sns', methods=['POST', ])
+def aws_sns():
+    # value = request.get_data()
+    value = request.form
+    print('val', value, type(value))
+    return json.dumps({"result": value}), 200, {'Content-Type': 'application/json'}
+
+
 # ------------------------------------- 按项目抓取结束
 
 @app.route('/queues')
@@ -232,13 +241,6 @@ def counter():
 def test():
     value = request.form['value']
     return f'ok:{value}', 200
-
-# 接收处理aws的sns订阅消息
-@app.route('/app/aws_sns', methods=['POST', ])
-def aws_sns():
-    value = request.get_data()
-    return json.dumps({"result": value}), 200, {'Content-Type': 'application/json'}
-
 
 @app.route('/dispatcher', methods=['POST', ])
 def dispatchertask():
