@@ -233,6 +233,12 @@ def test():
     value = request.form['value']
     return f'ok:{value}', 200
 
+# 接收处理aws的sns订阅消息
+@app.route('/app/aws_sns', methods=['POST', ])
+def aws_sns():
+    value = request.get_data()
+    return f'ok:{value}', 200
+
 
 @app.route('/dispatcher', methods=['POST', ])
 def dispatchertask():
