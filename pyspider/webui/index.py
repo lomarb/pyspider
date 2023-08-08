@@ -131,7 +131,7 @@ def del_project(project):
 def all_project():
     start_cp = CopyProject()
     result = start_cp.get_distinct_project()
-    return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
 
 # 获取项目名下所有爬虫文件
@@ -139,7 +139,7 @@ def all_project():
 def get_project(project):
     start_cp = CopyProject()
     result = start_cp.get_project_by_project(project)
-    return json.dumps({"res": str(result)}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
@@ -237,7 +237,7 @@ def test():
 @app.route('/app/aws_sns', methods=['POST', ])
 def aws_sns():
     value = request.get_data()
-    return f'ok:{value}', 200
+    return json.dumps({"result": value}), 200, {'Content-Type': 'application/json'}
 
 
 @app.route('/dispatcher', methods=['POST', ])
