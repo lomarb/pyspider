@@ -148,6 +148,7 @@ def aws_sns():
     # value = request.get_data()
     # SubscribeURL = request.form['SubscribeURL']
     SubscribeURL = request.data
+    SubscribeURL = SubscribeURL.decode('utf-8')
     print('val', SubscribeURL, type(SubscribeURL))
     return json.dumps({"result": str(SubscribeURL)}), 200, {'Content-Type': 'application/json'}
 
