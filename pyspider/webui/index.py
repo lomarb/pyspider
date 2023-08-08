@@ -147,9 +147,9 @@ def get_project(project):
 def aws_sns():
     # value = request.get_data()
     # SubscribeURL = request.form['SubscribeURL']
-    SubscribeURL = request.get_data()
-    print('val', SubscribeURL, type(SubscribeURL))
-    return json.dumps({"result": str(SubscribeURL)}), 200, {'Content-Type': 'application/json'}
+    data = request.get_data()
+    print('val', data, type(data))
+    return json.dumps({"result": json.loads(data)}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
