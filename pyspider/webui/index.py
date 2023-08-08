@@ -151,8 +151,21 @@ def aws_sns():
     data.items()
     # print('val', value.decode(), type(data))
     SubscribeURL = data.get('SubscribeURL')
-    if SubscribeURL and 'http' in SubscribeURL:
-        res = send_request(SubscribeURL)
+    payload = json.dumps({
+        "msg_type": "text",
+        "content": {
+            "text": str(data.to_dict(flat=False))
+        }
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    send_request(
+        'https://open.feishu.cn/open-apis/bot/v2/hook/2ce3ca72-b1ca-4373-b47a-3136f6fd6e82',
+        method='POST',
+        headers=headers,
+        data=payload)
+
     return json.dumps({"result": data.to_dict(flat=False), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
 
 
