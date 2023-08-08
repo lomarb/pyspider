@@ -148,13 +148,12 @@ def aws_sns():
     # value = request.get_data()
     # SubscribeURL = request.form['SubscribeURL']
     data = request.form
-    message = json.loads(request.data)
     # print('val', value.decode(), type(data))
     SubscribeURL = data.get('SubscribeURL')
     payload = json.dumps({
         "msg_type": "text",
         "content": {
-            "text": str(message)
+            "text": str(data)
             # "text": str(data.to_dict(flat=False))
         }
     })
@@ -167,7 +166,7 @@ def aws_sns():
         headers=headers,
         data=payload)
 
-    return json.dumps({"result": data.to_dict(flat=False),"message":str(message), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"result": data.to_dict(flat=False),"message":str(data), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
