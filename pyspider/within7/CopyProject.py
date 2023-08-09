@@ -119,7 +119,7 @@ class CopyProject:
             response = s3_client.put_object(Body=compressed_data, Bucket=bucket_name, Key=object_name)
             print('response', response)
             print(f"数据已成功打包并上传到S3桶 {bucket_name} 中，保存为对象 {object_name}")
-            return response.text
+            return response
         except Exception as e:
             print(f"上传数据到S3时出现错误：{e}")
             return str(e)
