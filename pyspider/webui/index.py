@@ -200,12 +200,14 @@ def pack_data_to_s3():
     # result_db = app.config['resultdb']
     project = request.args.get('project', "")
     collection_name = request.args.get('collection_name', "")
+    a_key = request.args.get('a_key', "")
+    s_key = request.args.get('s_key', "")
 
     if project == '' or collection_name == '':
         return json.dumps({"msg": '不要传空值'}), 200, {'Content-Type': 'application/json'}
 
     start_cp = CopyProject()
-    result = start_cp.save_result_to_s3(start_cp.result_db.database, collection_name, project)
+    result = start_cp.save_result_to_s3(start_cp.result_db.database, collection_name, project, a_key, s_key)
 
     return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 

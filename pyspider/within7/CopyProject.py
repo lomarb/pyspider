@@ -95,7 +95,7 @@ class CopyProject:
         return results
 
     # object_name 存路径
-    def save_result_to_s3(self, db, collection_name, project):
+    def save_result_to_s3(self, db, collection_name, project, a_key, s_key):
         # 保存在S3中的对象名称（通常以.gz结尾）
         object_name = f'resultDB/ods/{project}/{collection_name.split("_")[0]}/data.json.gz'
         cursor = list(db[collection_name].find())
@@ -114,7 +114,7 @@ class CopyProject:
         compressed_data = gzip.compress(res_str.encode('utf-8'))
 
         # 将压缩后的数据上传到S3
-        s3_client = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
+        s3_client = boto3.client('s3', aws_access_key_id=a_key, aws_secret_access_key=s_key)
         try:
             response = s3_client.put_object(Body=compressed_data, Bucket=bucket_name, Key=object_name)
             print('response', response)
