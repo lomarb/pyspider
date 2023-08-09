@@ -204,7 +204,11 @@ class CopyProject:
     # 查询任务状态
     def get_task_status(self, task_db, db_name):
         cursor = task_db[db_name].find({'url': {'$regex': 'data:,on'}})
-        return list(cursor)
+        documents = [doc for doc in cursor]
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])  # Convert ObjectId to string
+
+        return documents
 
     # 查询拿到数据的项目
     def get_db_list(self, project, db_name='result'):
