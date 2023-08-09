@@ -156,13 +156,13 @@ def get_db_list():
 # 获取项目名下所有爬虫文件
 @app.route('/query_task_status')
 def query_task_status():
-    task_db = app.config['taskdb']
+    # task_db = app.config['taskdb']
     project = request.args.get('project', "")
     if project == '':
         return json.dumps({"msg": '不要传空值'}), 200, {'Content-Type': 'application/json'}
 
     start_cp = CopyProject()
-    result = start_cp.get_task_status(task_db, project)
+    result = start_cp.get_task_status(start_cp.task_db.database, project)
     return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
 
@@ -197,7 +197,7 @@ def aws_sns():
 # 获取项目名下所有爬虫文件
 @app.route('/pack_data_to_s3')
 def pack_data_to_s3():
-    result_db = app.config['resultdb']
+    # result_db = app.config['resultdb']
     project = request.args.get('project', "")
     collection_name = request.args.get('collection_name', "")
 
@@ -205,7 +205,7 @@ def pack_data_to_s3():
         return json.dumps({"msg": '不要传空值'}), 200, {'Content-Type': 'application/json'}
 
     start_cp = CopyProject()
-    result = start_cp.save_result_to_s3(result_db, collection_name, project)
+    result = start_cp.save_result_to_s3(start_cp.result_db.database, collection_name, project)
 
     return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
