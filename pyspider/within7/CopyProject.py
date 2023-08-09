@@ -95,9 +95,10 @@ class CopyProject:
         return results
 
     # object_name 存路径
-    def save_result_to_s3(self, collection_name, object_name, keyword):
-        cursor = list(self.result_db.database[collection_name].find())
-        # data = list(collection.aggregate(pipeline))
+    def save_result_to_s3(self, db, collection_name, project):
+        # 保存在S3中的对象名称（通常以.gz结尾）
+        object_name = f'resultDB/ods/{project}/{collection_name.split("_")[0]}/data.json.gz'
+        cursor = list(db[collection_name].find())
         print('data', len(cursor), cursor)
         res_str = ''
         # 将数据转换为JSON字符串
@@ -118,8 +119,10 @@ class CopyProject:
             response = s3_client.put_object(Body=compressed_data, Bucket=bucket_name, Key=object_name)
             print('response', response)
             print(f"数据已成功打包并上传到S3桶 {bucket_name} 中，保存为对象 {object_name}")
+            return response.text
         except Exception as e:
             print(f"上传数据到S3时出现错误：{e}")
+            return str(e)
 
     @staticmethod
     def replace_script(script, p_name, media):
@@ -198,14 +201,27 @@ class CopyProject:
         ret = self.db.update(project, update)
         return {'count': str(ret)}
 
+    # 查询任务状态
+    def get_task_status(self, task_db, db_name):
+        cursor = task_db[db_name].find({'url': {'$regex': 'data:,on'}})
+        return list(cursor)
+
     # 查询拿到数据的项目
-    def get_spider_data(self, project):
+    def get_db_list(self, project, db_name='result'):
         db_task = []
+        db_dict = {
+            "result": self.result_db,
+            "task": self.task_db,
+        }
+        db = db_dict.get(db_name, None)
+        if db is None:
+            return []
+
         for media_key in rp_project.media_dict_arr:
             collection = rp_project.media_dict_arr[media_key]
             for c in collection:
                 collection_name = f"{c}_{project}"
-                if collection_name in self.result_db.database.list_collection_names():
+                if collection_name in db.database.list_collection_names():
                     print(f"'{collection_name}' exists.")
                     db_task.append(f"'{collection_name}' exists.")
                 else:
@@ -230,6 +246,10 @@ class CopyProject:
         )
         # 打印出响应
         print(response)
+
+    # 查询爬取结果数据
+    def query_result_data(self):
+        pass
 
 
 def send_request(url, method='GET', headers=None, data=None):

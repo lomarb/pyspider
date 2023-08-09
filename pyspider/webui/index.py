@@ -142,6 +142,30 @@ def get_project(project):
     return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
 
+# 获取项目名下所有爬虫文件
+@app.route('/get_db_list')
+def get_db_list():
+    start_cp = CopyProject()
+    project = request.args.get('project', "")
+    db = request.args.get('db', "result")
+
+    result = start_cp.get_db_list(project, db_name=db)
+    return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
+
+
+# 获取项目名下所有爬虫文件
+@app.route('/query_task_status')
+def query_task_status():
+    task_db = app.config['taskdb']
+    project = request.args.get('project', "")
+    if project == '':
+        return json.dumps({"msg": '不要传空值'}), 200, {'Content-Type': 'application/json'}
+
+    start_cp = CopyProject()
+    result = start_cp.get_task_status(task_db, project)
+    return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
+
+
 # 接收处理aws的sns订阅消息
 @app.route('/aws_sns', methods=['POST', ])
 def aws_sns():
@@ -166,7 +190,24 @@ def aws_sns():
         headers=headers,
         data=payload)
 
-    return json.dumps({"result": data.to_dict(flat=False),"message":str(data), "subUrl": SubscribeURL}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"result": data.to_dict(flat=False), "message": str(data), "subUrl": SubscribeURL}), 200, {
+        'Content-Type': 'application/json'}
+
+
+# 获取项目名下所有爬虫文件
+@app.route('/pack_data_to_s3')
+def pack_data_to_s3():
+    result_db = app.config['resultdb']
+    project = request.args.get('project', "")
+    collection_name = request.args.get('collection_name', "")
+
+    if project == '' or collection_name == '':
+        return json.dumps({"msg": '不要传空值'}), 200, {'Content-Type': 'application/json'}
+
+    start_cp = CopyProject()
+    result = start_cp.save_result_to_s3(result_db, collection_name, project)
+
+    return json.dumps({"res": result}), 200, {'Content-Type': 'application/json'}
 
 
 # ------------------------------------- 按项目抓取结束
@@ -259,6 +300,7 @@ def counter():
 def test():
     value = request.form['value']
     return f'ok:{value}', 200
+
 
 @app.route('/dispatcher', methods=['POST', ])
 def dispatchertask():
