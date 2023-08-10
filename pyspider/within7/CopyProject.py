@@ -120,9 +120,9 @@ class CopyProject:
             print('response', response)
             print(f"数据已成功打包并上传到S3桶 {bucket_name} 中，保存为对象 {object_name}")
             del_drop_result = self.result_db.database[collection_name].drop()
-            del_drop_project = self.db.database[collection_name].drop()
+            self.drop_project_by_name(collection_name)
             del_drop_task = self.task_db.database[collection_name].drop()
-            return {"del_drop_result": del_drop_result,"del_drop_project": del_drop_project, "upload": response}
+            return {"del_drop_result": del_drop_result,"del_drop_task": del_drop_task, "upload": response}
         except Exception as e:
             print(f"上传数据到S3时出现错误：{e}")
             return str(e)
@@ -153,6 +153,10 @@ class CopyProject:
             temp = self.start_copy(f"{m}_{p_name}", media)
             results.append(temp)
         return results
+
+    # 清除项目
+    def drop_project_by_name(self, name):
+        return self.db.collection.remove({'name': name})
 
     # 清除完成的任务
     def drop_project(self, name):
