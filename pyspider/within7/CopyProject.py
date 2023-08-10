@@ -119,8 +119,10 @@ class CopyProject:
             response = s3_client.put_object(Body=compressed_data, Bucket=bucket_name, Key=object_name)
             print('response', response)
             print(f"数据已成功打包并上传到S3桶 {bucket_name} 中，保存为对象 {object_name}")
-            del_drop = db[collection_name].drop()
-            return {"del": del_drop, "upload": response}
+            del_drop_result = self.result_db.database[collection_name].drop()
+            del_drop_project = self.db.database[collection_name].drop()
+            del_drop_task = self.task_db.database[collection_name].drop()
+            return {"del_drop_result": del_drop_result,"del_drop_project": del_drop_project, "upload": response}
         except Exception as e:
             print(f"上传数据到S3时出现错误：{e}")
             return str(e)
