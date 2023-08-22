@@ -61,9 +61,18 @@ def copy():
 # 飞书相关接口
 @app.route('/get_feishu_app_token')
 def get_feishu_app_token():
+    app_id = ''
+    app_secret = ''
+    with open('/opt/pyspider/feishu_key', 'r') as f:
+        app_id = f.read()
+        f.close()
+    with open('/opt/pyspider/feishu_secret', 'r') as f:
+        app_secret = f.read()
+        f.close()
+
     data = json.dumps({
-        "app_id": "cli_a4250ac151bd500c",
-        "app_secret": "75LXpuQaXoWUtJZDTndynhBGcoZhtZMq"
+        "app_id": app_id,
+        "app_secret": app_secret,
     })
     headers = {
         'Content-Type': 'application/json'
