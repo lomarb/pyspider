@@ -203,7 +203,7 @@ config.update({
     'provider_mapping': {
         '/': ScriptProvider(app)
     },
-    'domaincontroller': NeedAuthController(app),
+    'http_authenticator': {'HTTPAuthenticator': NeedAuthController(app)},
     'verbose': 1 if app.debug else 0,
     'dir_browser': {'davmount': False,
                     'enable': True,
