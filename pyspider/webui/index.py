@@ -81,7 +81,7 @@ def get_feishu_app_token():
         method='POST',
         headers=headers,
         data=data)
-    return {"res":res, "app_id":app_id}
+    return json.dumps({"res": res, "app_id": app_id})
 
 
 @app.route('/get_feishu_excel')
