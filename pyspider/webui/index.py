@@ -33,7 +33,6 @@ app_id = config['FS']['app_id']
 app_secret = config['FS']['app_secret']
 
 
-
 def utf8(string):
     """
     Make sure string is utf8 encoded bytes.
@@ -81,8 +80,10 @@ def get_feishu_app_token():
         method='POST',
         headers=headers,
         data=data)
-    return json.dumps({"app_id": app_id})
-
+    try:
+        return res.decode('utf-8')
+    except Exception as e:
+        return e
 
 @app.route('/get_feishu_excel')
 def get_feishu_excel():

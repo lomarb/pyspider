@@ -10,14 +10,9 @@ from pyspider.database.mongodb.projectdb import ProjectDB
 from pyspider.database.mongodb.resultdb import ResultDB
 from pyspider.database.mongodb.taskdb import TaskDB
 import redis
+import configparser
 
 bucket_name = 'test-ypp0711-lambda-bucket'  # S3桶的名称
-
-with open('/opt/pyspider/access_key') as f:
-    access_key = f.read()
-
-with open('/opt/pyspider/secret_key') as f:
-    secret_key = f.read()
 
 
 # 获取每个媒体下面的需要替换的代码
@@ -66,11 +61,16 @@ class ReplaceProject:
 
 rp_project = ReplaceProject()
 
+config = configparser.ConfigParser()
+config.read('/opt/pyspider/key.config')
+db_name = config['DB']['db_name']
+db_pass = config['DB']['db_pass']
+
 
 class CopyProject:
 
     def __init__(self):
-        url = 'mongodb://root:8a2p9j3x9g@3.134.227.240/projectdb?authSource=admin'
+        url = f'mongodb://{db_name}:{db_pass}@3.134.227.240/projectdb?authSource=admin'
         self.db = ProjectDB(url, database='projectdb')
         self.result_db = ResultDB(url)
         self.task_db = TaskDB(url)
@@ -122,7 +122,7 @@ class CopyProject:
             del_drop_result = self.result_db.database[collection_name].drop()
             self.drop_project_by_name(collection_name)
             del_drop_task = self.task_db.database[collection_name].drop()
-            return {"del_drop_result": del_drop_result,"del_drop_task": del_drop_task, "upload": response}
+            return {"del_drop_result": del_drop_result, "del_drop_task": del_drop_task, "upload": response}
         except Exception as e:
             print(f"上传数据到S3时出现错误：{e}")
             return str(e)
