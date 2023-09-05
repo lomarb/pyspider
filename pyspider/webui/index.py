@@ -12,6 +12,7 @@ from six import iteritems, itervalues
 from flask import render_template, request, json
 from pyspider.within7.CopyProject import CopyProject, fetch_url, send_request
 import time
+import configparser
 
 try:
     import flask_login as login
@@ -25,12 +26,12 @@ md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
 
 js_host = 'http://3.15.15.192:3000'
 
-with open('/opt/pyspider/feishu_key', 'r') as f:
-    app_id = f.read()
-    f.close()
-with open('/opt/pyspider/feishu_secret', 'r') as f:
-    app_secret = f.read()
-    f.close()
+# # 创建一个配置文件解析器对象
+config = configparser.ConfigParser()
+config.read('/opt/pyspider/key.config')
+app_id = config['FS']['app_id']
+app_secret = config['FS']['app_secret']
+
 
 
 def utf8(string):
@@ -80,7 +81,7 @@ def get_feishu_app_token():
         method='POST',
         headers=headers,
         data=data)
-    return res
+    return {"res":res, "app_id":app_id}
 
 
 @app.route('/get_feishu_excel')
