@@ -30,10 +30,14 @@ js_host = 'http://3.15.15.192:3000'
 
 # # 创建一个配置文件解析器对象
 try:
-    config = configparser.ConfigParser()
-    config.read('/opt/pyspider/key.config')
-    app_id = config['FS']['app_id']
-    app_secret = config['FS']['app_secret']
+    # config = configparser.ConfigParser()
+    # config.read('/opt/pyspider/key.config')
+    # app_id = config['FS']['app_id']
+    # app_secret = config['FS']['app_secret']
+    feishu_resultdb = app.config['resultdb']
+    feishu_results = list(feishu_resultdb.select('FeishuInfo'))
+    app_id = feishu_results[0]['result']['app_id']
+    app_secret = feishu_results[0]['result']['app_secret']
 except:
     app_id = ''
     app_secret = ''
