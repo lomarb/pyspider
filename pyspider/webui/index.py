@@ -126,6 +126,7 @@ def get_feishu_task():
     url = f"https://open.feishu.cn/open-apis/bitable/v1/apps/{token}/tables/{table}/records?&page_size=200&view_id={view_id}"
     payload = ''
     u_token = get_feishu_token()
+    return {"u_token": u_token}
     if u_token is None:
         return {'err': 'token获取失败'}
 
