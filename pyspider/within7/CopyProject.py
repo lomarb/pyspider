@@ -61,10 +61,14 @@ class ReplaceProject:
 
 rp_project = ReplaceProject()
 
-config = configparser.ConfigParser()
-config.read('/opt/pyspider/key.config')
-db_name = config['DB']['db_name']
-db_pass = config['DB']['db_pass']
+try:
+    config = configparser.ConfigParser()
+    config.read('/opt/pyspider/key.config')
+    db_name = config['DB']['db_name']
+    db_pass = config['DB']['db_pass']
+except:
+    db_name = ''
+    db_pass = ''
 
 
 class CopyProject:

@@ -29,10 +29,14 @@ md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
 js_host = 'http://3.15.15.192:3000'
 
 # # 创建一个配置文件解析器对象
-config = configparser.ConfigParser()
-config.read('/opt/pyspider/key.config')
-app_id = config['FS']['app_id']
-app_secret = config['FS']['app_secret']
+try:
+    config = configparser.ConfigParser()
+    config.read('/opt/pyspider/key.config')
+    app_id = config['FS']['app_id']
+    app_secret = config['FS']['app_secret']
+except:
+    app_id = ''
+    app_secret = ''
 
 # redis_client = redis.StrictRedis(host='172.26.7.16', port=6379, db=5)
 REDIS_URL = f'redis://172.26.7.16:6379/5'
