@@ -29,18 +29,6 @@ md5string = lambda x: hashlib.md5(utf8(x)).hexdigest()
 js_host = 'http://3.15.15.192:3000'
 
 # # 创建一个配置文件解析器对象
-try:
-    # config = configparser.ConfigParser()
-    # config.read('/opt/pyspider/key.config')
-    # app_id = config['FS']['app_id']
-    # app_secret = config['FS']['app_secret']
-    feishu_resultdb = app.config['resultdb']
-    feishu_results = list(feishu_resultdb.select('FeishuInfo'))
-    app_id = feishu_results[0]['result']['app_id']
-    app_secret = feishu_results[0]['result']['app_secret']
-except:
-    app_id = ''
-    app_secret = ''
 
 # redis_client = redis.StrictRedis(host='172.26.7.16', port=6379, db=5)
 REDIS_URL = f'redis://172.26.7.16:6379/5'
@@ -103,11 +91,22 @@ def get_user_info(code):
     return response.text
 
 
+def get_feishu_key():
+    feishu_resultdb = app.config['resultdb']
+    feishu_results = list(feishu_resultdb.select('FeishuInfo'))
+    app_id = feishu_results[0]['result']['app_id']
+    app_secret = feishu_results[0]['result']['app_secret']
+
+    return app_id, app_secret
+
+
 # 获取飞书 app token 和 tenant token
 def get_feishu_token(token_name='token'):
     old_token = redis_client.get(f'feishu:{token_name}')
     if old_token is not None:
         return old_token
+    app_id = get_feishu_key()
+    app_secret = get_feishu_key()
     payload = json.dumps({
         "app_id": app_id,
         "app_secret": app_secret,
@@ -207,6 +206,9 @@ def get_feishu_app_token():
 # 飞书相关接口
 @app.route('/get_feishu_old_token')
 def get_feishu_old_token():
+    app_id = get_feishu_key()
+    app_secret = get_feishu_key()
+
     data = json.dumps({
         "app_id": app_id,
         "app_secret": app_secret,
