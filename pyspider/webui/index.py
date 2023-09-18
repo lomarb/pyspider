@@ -61,6 +61,10 @@ def index():
     return render_template("index.html", projects=projects)
 
 
+@vue3_blueprint.route('/vue3')
+def admin():
+    return render_template("index.html")
+
 @app.route('/admin')
 def admin():
     return render_template("admin.html")
