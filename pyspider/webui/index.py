@@ -136,19 +136,20 @@ def get_feishu_task():
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
     print('data', data)
-    tmp_set = {}  # 所有的媒体
-    for item in data['data']['items']:
-        one = item['fields']
-        task = one['任务类型']
-        all_keys = item['fields'].keys()
-
-        if tmp_set.get(task) is None:
-            tmp_set[task] = []
-
-        for key in all_keys:
-            if key.startswith('关键词'):
-                tmp_set[task].append(one[key])
-    return tmp_set
+    return data
+    # tmp_set = {}  # 所有的媒体
+    # for item in data['data']['items']:
+    #     one = item['fields']
+    #     task = one['任务类型']
+    #     all_keys = item['fields'].keys()
+    #
+    #     if tmp_set.get(task) is None:
+    #         tmp_set[task] = []
+    #
+    #     for key in all_keys:
+    #         if key.startswith('关键词'):
+    #             tmp_set[task].append(one[key])
+    # return tmp_set
 
 
 # 获取飞书抓取任务
