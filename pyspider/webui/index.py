@@ -112,6 +112,7 @@ def get_feishu_token(token_name='token'):
     redis_client.set(f'feishu:token', token_info['tenant_access_token'])
     redis_client.set(f'feishu:app_token', token_info['app_access_token'])
     redis_client.expire(f'feishu:token', token_info['expire'] - 500)
+    redis_client.expire(f'feishu:app_token', token_info['expire'] - 500)
     return redis_client.get(f'feishu:{token_name}')
 
 
@@ -134,7 +135,8 @@ def get_feishu_task():
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
-    tmp_set = {}    # 所有的媒体
+    print('data', data)
+    tmp_set = {}  # 所有的媒体
     for item in data['data']['items']:
         one = item['fields']
         task = one['任务类型']
@@ -147,6 +149,7 @@ def get_feishu_task():
             if key.startswith('关键词'):
                 tmp_set[task].append(one[key])
     return tmp_set
+
 
 # 获取飞书抓取任务
 @app.route('/get_feishu_spider')
