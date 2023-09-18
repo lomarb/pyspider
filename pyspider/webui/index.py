@@ -105,16 +105,11 @@ def get_feishu_token(token_name='token'):
     old_token = redis_client.get(f'feishu:{token_name}')
     if old_token is not None:
         return old_token
-    app_id = get_feishu_key()
-    app_secret = get_feishu_key()
+    app_id, app_secret = get_feishu_key()
     payload = json.dumps({
         "app_id": app_id,
         "app_secret": app_secret,
     })
-    return {
-        "app_id": app_id,
-        "app_secret": app_secret,
-    }
 
     headers = {
         'Content-Type': 'application/json; charset=utf-8'
@@ -211,8 +206,7 @@ def get_feishu_app_token():
 # 飞书相关接口
 @app.route('/get_feishu_old_token')
 def get_feishu_old_token():
-    app_id = get_feishu_key()
-    app_secret = get_feishu_key()
+    app_id, app_secret = get_feishu_key()
 
     data = json.dumps({
         "app_id": app_id,
