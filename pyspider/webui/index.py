@@ -161,6 +161,18 @@ def get_feishu_task():
     return tmp_set
 
 
+# 获取项目名下所有爬虫文件
+@app.route('/get_feishu_test')
+def get_feishu_test():
+    resultdb = app.config['resultdb']
+    # offset = int(request.values.get('offset', 0))
+    # limit = int(request.values.get('limit', 20))
+    # fields = json.loads(request.values.get('fields', '{}')) or None
+    # filter = json.loads(request.values.get('filter', '{}')) or None
+    results = list(resultdb.select('FeishuInfo'))
+    return json.dumps({"res": results}), 200, {'Content-Type': 'application/json'}
+
+
 # 获取飞书抓取任务
 @app.route('/get_feishu_spider')
 def get_feishu_spider():
