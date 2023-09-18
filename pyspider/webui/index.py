@@ -34,7 +34,9 @@ config.read('/opt/pyspider/key.config')
 app_id = config['FS']['app_id']
 app_secret = config['FS']['app_secret']
 
-redis_client = redis.StrictRedis(host='172.26.7.16', port=6379, db=5)
+# redis_client = redis.StrictRedis(host='172.26.7.16', port=6379, db=5)
+REDIS_URL = f'redis://172.26.7.16:6379/5'
+redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True, encoding='utf-8')
 
 
 def utf8(string):
@@ -126,7 +128,6 @@ def get_feishu_task():
     url = f"https://open.feishu.cn/open-apis/bitable/v1/apps/{token}/tables/{table}/records?&page_size=200&view_id={view_id}"
     payload = ''
     u_token = get_feishu_token()
-    return {"u_token": u_token}
     if u_token is None:
         return {'err': 'token获取失败'}
 
@@ -137,20 +138,19 @@ def get_feishu_task():
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
     print('data', data)
-    return data
-    # tmp_set = {}  # 所有的媒体
-    # for item in data['data']['items']:
-    #     one = item['fields']
-    #     task = one['任务类型']
-    #     all_keys = item['fields'].keys()
-    #
-    #     if tmp_set.get(task) is None:
-    #         tmp_set[task] = []
-    #
-    #     for key in all_keys:
-    #         if key.startswith('关键词'):
-    #             tmp_set[task].append(one[key])
-    # return tmp_set
+    tmp_set = {}  # 所有的媒体
+    for item in data['data']['items']:
+        one = item['fields']
+        task = one['任务类型']
+        all_keys = item['fields'].keys()
+
+        if tmp_set.get(task) is None:
+            tmp_set[task] = []
+
+        for key in all_keys:
+            if key.startswith('关键词'):
+                tmp_set[task].append(one[key])
+    return tmp_set
 
 
 # 获取飞书抓取任务
