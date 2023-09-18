@@ -111,6 +111,11 @@ def get_feishu_token(token_name='token'):
         "app_id": app_id,
         "app_secret": app_secret,
     })
+    return {
+        "app_id": app_id,
+        "app_secret": app_secret,
+    }
+
     headers = {
         'Content-Type': 'application/json; charset=utf-8'
     }
@@ -120,7 +125,6 @@ def get_feishu_token(token_name='token'):
     #                        url=f'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal?timestamp={int(time.time() * 1000)}',
     #                        headers=headers, data=payload)
     token_info = response.json()
-    return token_info
     if token_info['code'] != 0:
         return None
     redis_client.set(f'feishu:token', token_info['tenant_access_token'])
