@@ -162,7 +162,7 @@ def get_feishu_task():
 
             for key in all_keys:
                 # text = "关键词5"
-                pattern = r'关键词\d+$'
+                pattern = r'^关键词\d+$'
                 matches = re.findall(pattern, key)
                 if matches:
                     # if key.startswith('关键词'):
