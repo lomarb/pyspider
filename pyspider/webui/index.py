@@ -5,6 +5,7 @@
 #         http://binux.me
 # Created on 2014-02-22 23:20:39
 
+import re
 import socket
 import hashlib
 import redis
@@ -160,7 +161,11 @@ def get_feishu_task():
                 tmp_set[task] = []
 
             for key in all_keys:
-                if key.startswith('关键词'):
+                # text = "关键词5"
+                pattern = r'关键词\d+$'
+                matches = re.findall(pattern, key)
+                if matches:
+                    # if key.startswith('关键词'):
                     tmp_set[task].append(one[key])
     except:
         return data
