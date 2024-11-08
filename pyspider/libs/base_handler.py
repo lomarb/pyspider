@@ -8,7 +8,7 @@
 import sys
 import inspect
 import functools
-import fractions
+import math
 
 import six
 from six import add_metaclass, iteritems
@@ -61,7 +61,7 @@ def config(_config=None, **kwargs):
     return wrapper
 
 
-class NOTSET(object):
+class NOTSET():
     pass
 
 
@@ -112,7 +112,7 @@ class BaseHandlerMeta(type):
         for each in attrs.values():
             if inspect.isfunction(each) and getattr(each, 'is_cronjob', False):
                 cron_jobs.append(each)
-                min_tick = fractions.gcd(min_tick, each.tick)
+                min_tick = math.gcd(min_tick, each.tick)
         newcls = type.__new__(cls, name, bases, attrs)
         newcls._cron_jobs = cron_jobs
         newcls._min_tick = min_tick
@@ -120,7 +120,7 @@ class BaseHandlerMeta(type):
 
 
 @add_metaclass(BaseHandlerMeta)
-class BaseHandler(object):
+class BaseHandler():
     """
     BaseHandler for all scripts.
 
@@ -391,7 +391,7 @@ class BaseHandler(object):
 
         if isinstance(url, six.string_types):
             return self._crawl(url, **kwargs)
-        elif hasattr(url, "__iter__"):
+        if hasattr(url, "__iter__"):
             result = []
             for each in url:
                 result.append(self._crawl(each, **kwargs))
