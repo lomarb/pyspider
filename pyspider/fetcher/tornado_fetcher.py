@@ -665,7 +665,7 @@ class Fetcher():
         for each in task_fetch:
             if each not in fetch:
                 fetch[each] = task_fetch[each]
-
+        fetch['headless'] = "false" if "headless" not in fetch else fetch['headless']
         # robots.txt
         if task_fetch.get('robots_txt', False):
             user_agent = fetch['headers']['User-Agent']

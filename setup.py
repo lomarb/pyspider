@@ -101,6 +101,7 @@ setup(
         'pyspider': [
             'logging.conf',
             'fetcher/phantomjs_fetcher.js',
+            'fetcher/puppeteer_fetcher.js',
             'fetcher/splash_fetcher.lua',
             'webui/static/*.js',
             'webui/static/*.css',

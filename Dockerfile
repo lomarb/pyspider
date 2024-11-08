@@ -12,7 +12,7 @@ RUN mkdir -p /opt/phantomjs \
 ENV OPENSSL_CONF=/etc/ssl/
 
 # install nodejs
-ENV NODEJS_VERSION=8.15.0 \
+ENV NODEJS_VERSION=10.15.3 \
     PATH=$PATH:/opt/node/bin
 WORKDIR "/opt/node"
 RUN apt-get -qq update && apt-get -qq install -y curl ca-certificates libx11-xcb1 libxtst6 libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0 --no-install-recommends && \
