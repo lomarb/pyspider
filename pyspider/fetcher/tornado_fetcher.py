@@ -13,6 +13,7 @@ import six
 import copy
 import time
 import json
+import random
 import logging
 import traceback
 import functools
@@ -78,7 +79,8 @@ class Fetcher(object):
     splash_lua_source = open(os.path.join(os.path.dirname(__file__), "splash_fetcher.lua")).read()
     robot_txt_age = 60*60  # 1h
 
-    def __init__(self, inqueue, outqueue, poolsize=100, proxy=None, async_mode=True):
+    def __init__(self, resultdb, inqueue, outqueue, poolsize=100, proxy=None, async_mode=True):
+        self.resultdb = resultdb
         self.inqueue = inqueue
         self.outqueue = outqueue
 
@@ -241,7 +243,18 @@ class Fetcher(object):
             proxy_string = task_fetch['proxy']
         elif self.proxy and task_fetch.get('proxy', True):
             proxy_string = self.proxy
+        # FIXME: Start to auto get a proxy in silent
+        if proxy_string == 'auto':
+            try:
+                # resultdb = pyspider.database.connect_database('mongodb+resultdb://root:8a2p9j3x9g@172.18.0.3:27017/resultdb?authSource=admin')
+                proxy_string = random.choice(list((list(self.resultdb.select('AutoProxyPool'))[0:1]+[{}])[0].get('result', {}).values()))
+            except:
+                proxy_string = None
+        # FIXME: End auto get a proxy in silent
         if proxy_string:
+            # FIXME: Start to auto get a proxy in silent
+            fetch['proxy'] = proxy_string
+            # FIXME: End auto get a proxy in silent
             if '://' not in proxy_string:
                 proxy_string = 'http://' + proxy_string
             proxy_splited = urlsplit(proxy_string)
@@ -332,6 +345,10 @@ class Fetcher(object):
 
         # setup request parameters
         fetch = self.pack_tornado_request_parameters(url, task)
+        # FIXME: Start to auto get a proxy in silent
+        if 'proxy' in fetch:
+            del fetch['proxy']
+        # FIXME: End auto get a proxy in silent
         task_fetch = task.get('fetch', {})
 
         session = cookies.RequestsCookieJar()

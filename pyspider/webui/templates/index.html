@@ -63,6 +63,16 @@
           {% endif %}
         </div>
 
+        <div style="float: left;margin: 0 10px;" class="">
+          <select name="group" id="groupSelect" class="form-control">
+            
+          </select>
+        </div>
+
+        <div class="active-btn-div">
+          <a class="btn btn-default btn-info" href='/'>All</a>
+        </div>
+
         <div class="modal fade" id="create-project-modal">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -123,7 +133,7 @@
             <th data-type="num">actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="contentTask">
         {% raw %}
           <tr v-cloak v-for="project in projects" data-name="{{* project.name }}">
             <td class="project-group"><span>{{ project.group }}</span></td>
@@ -177,7 +187,44 @@
     </section>
     <script>
       // json projects data for vue
-      var projects = {{ projects | tojson | safe }};
+      var tg = new Set;
+      var groupName = ''
+      if (location.search.indexOf('group=') > -1) {
+        groupName = location.search.split('group=')[1]
+      }
+      
+      var allTask = {{ projects | tojson | safe }};
+      allTask = JSON.parse(JSON.stringify(allTask))
+      var projects = []
+      allTask.forEach(el => {
+        tg.add(el.group)
+        if (groupName=='') {
+          projects.push(el)
+        } else {
+          if (el.group == groupName) {
+            projects.push(el)
+          }
+        }
+      });
+
+      var html = "";
+      var groupArr = Array.from(tg)
+      $.each(groupArr, function(k, v) { //这里的函数参数是键值对的形式，k代表键名，v代表值                
+          html += '<option value="' + groupArr[k] + '">' + groupArr[k] + '</option>';
+      });
+      $("#groupSelect").append(html);
+
+      $("#groupSelect").change(function () {
+        console.log($("#groupSelect").val());
+        location.href = location.protocol + '//' + location.host + '?group=' + $("#groupSelect").val()
+      })
+
+      if (groupName) {
+        $("#groupSelect").val(groupName)
+      } else {
+        $("#groupSelect").val('')
+      }
+
     </script>
     <script src="{{ url_for('cdn', path='twitter-bootstrap/3.1.1/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('cdn', path='x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>

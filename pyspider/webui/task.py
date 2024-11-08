@@ -100,4 +100,17 @@ def active_tasks():
 
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
+
+@app.route('/task_status/<project>')
+def task_status(project):
+    if ':' not in project:
+        abort(400)
+    project, subproject = project.split(':', 1)
+
+    taskdb = app.config['taskdb']
+    result = taskdb.status_count(project, subproject)
+    return json.dumps(result), 200, {'Content-Type': 'application/json'}
+
+
+
 app.template_filter('format_date')(utils.format_date)

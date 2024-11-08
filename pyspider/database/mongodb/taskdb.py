@@ -40,20 +40,23 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
     def _parse(self, data):
         if '_id' in data:
             del data['_id']
+        # TODO: remove data stringify
         for each in ('schedule', 'fetch', 'process', 'track'):
             if each in data:
                 if data[each]:
                     if isinstance(data[each], bytearray):
                         data[each] = str(data[each])
-                    data[each] = json.loads(data[each], encoding='utf8')
+                    if isinstance(data[each], str):
+                        data[each] = json.loads(data[each], encoding='utf8')
                 else:
                     data[each] = {}
         return data
 
     def _stringify(self, data):
-        for each in ('schedule', 'fetch', 'process', 'track'):
-            if each in data:
-                data[each] = json.dumps(data[each])
+        # TODO: remove data stringify
+        # for each in ('schedule', 'fetch', 'process', 'track'):
+        #     if each in data:
+        #         data[each] = json.dumps(data[each])
         return data
 
     def load_tasks(self, status, project=None, fields=None):
@@ -81,7 +84,7 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
             return ret
         return self._parse(ret)
 
-    def status_count(self, project):
+    def status_count(self, project, subproject=''):
         if project not in self.projects:
             self._list_project()
         if project not in self.projects:
@@ -102,7 +105,10 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
 
         # Instead of aggregate, use find-count on status(with index) field.
         def _count_for_status(collection, status):
-            total = collection.find({'status': status}).count()
+            sql = {'status': status}
+            if subproject != '':
+                sql = {'status': status, 'subproject': subproject}
+            total = collection.find(sql).count()
             return {'total': total, "_id": status} if total else None
 
         c = self.database[collection_name]
@@ -126,6 +132,7 @@ class TaskDB(SplitTableMixin, BaseTaskDB):
         obj = dict(obj)
         obj['taskid'] = taskid
         obj['project'] = project
+        # obj['subproject'] = 'test'
         obj['updatetime'] = time.time()
         return self.update(project, taskid, obj=obj)
 

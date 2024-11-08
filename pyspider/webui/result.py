@@ -7,30 +7,33 @@
 
 from __future__ import unicode_literals
 
+import json
 from flask import render_template, request, json
 from flask import Response
 from .app import app
 from pyspider.libs import result_dump
 
 
-@app.route('/results')
+@app.route('/results', methods=['POST', 'GET'])
 def result():
     resultdb = app.config['resultdb']
-    project = request.args.get('project')
-    offset = int(request.args.get('offset', 0))
-    limit = int(request.args.get('limit', 20))
+    project = request.values.get('project')
+    offset = int(request.values.get('offset', 0))
+    limit = int(request.values.get('limit', 20))
+    fields = json.loads(request.values.get('fields', '{}')) or None
+    filter = json.loads(request.values.get('filter', '{}')) or None
 
-    count = resultdb.count(project)
-    results = list(resultdb.select(project, offset=offset, limit=limit))
+    count = resultdb.count(project, filter)
+    results = list(resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter))
 
     return render_template(
         "result.html", count=count, results=results,
         result_formater=result_dump.result_formater,
-        project=project, offset=offset, limit=limit, json=json
+        project=project, fields=fields, offset=offset, limit=limit, filter=filter, json=json
     )
 
 
-@app.route('/results/dump/<project>.<_format>')
+@app.route('/results/dump/<project>.<_format>', methods=['POST', 'GET'])
 def dump_result(project, _format):
     resultdb = app.config['resultdb']
     # force update project list
@@ -38,12 +41,15 @@ def dump_result(project, _format):
     if project not in resultdb.projects:
         return "no such project.", 404
 
-    offset = int(request.args.get('offset', 0)) or None
-    limit = int(request.args.get('limit', 0)) or None
-    results = resultdb.select(project, offset=offset, limit=limit)
+    offset = int(request.values.get('offset', 0))
+    limit = int(request.values.get('limit', 0))
+    fields = json.loads(request.values.get('fields', '{}')) or None
+    filter = json.loads(request.values.get('filter', '{}')) or None
+    
+    results = resultdb.select(project, fields=fields, offset=offset, limit=limit, filter=filter)
 
     if _format == 'json':
-        valid = request.args.get('style', 'rows') == 'full'
+        valid = request.values.get('style', 'rows') == 'full'
         return Response(result_dump.dump_as_json(results, valid),
                         mimetype='application/json')
     elif _format == 'txt':

@@ -13,7 +13,7 @@ logger = logging.getLogger("webui")
 from six import reraise
 from six.moves import builtins
 from six.moves.urllib.parse import urljoin
-from flask import Flask
+from flask import Flask, Blueprint
 from pyspider.fetcher import tornado_fetcher
 
 if os.name == 'nt':
@@ -87,6 +87,18 @@ class QuitableFlask(Flask):
 app = QuitableFlask('webui',
                     static_folder=os.path.join(os.path.dirname(__file__), 'static'),
                     template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
+
+vue3_blueprint = Blueprint('vue3_blueprint', __name__,
+                           static_folder=os.path.join(os.path.dirname(__file__), 'vue3_static'),
+                           template_folder=os.path.join(os.path.dirname(__file__), 'vue3_templates')
+                           # static_url_path='/static1'
+                           )
+# blueprint2 = Blueprint('blueprint2', __name__, static_folder='static2', static_url_path='/static2')
+# my_blueprint = Blueprint('my_blueprint', __name__, template_folder='templates', static_folder='static')
+
+app.register_blueprint(vue3_blueprint)
+# app.register_blueprint(blueprint2)
+
 app.secret_key = os.urandom(24)
 app.jinja_env.line_statement_prefix = '#'
 app.jinja_env.globals.update(builtins.__dict__)

@@ -38,13 +38,15 @@ class ResultDB(SplitTableMixin, BaseResultDB):
 
     def _parse(self, data):
         data['_id'] = str(data['_id'])
-        if 'result' in data:
-            data['result'] = json.loads(data['result'])
+        # TODO: remove data['result'] stringfy
+        # if 'result' in data:
+        #     data['result'] = json.loads(data['result'])
         return data
 
     def _stringify(self, data):
-        if 'result' in data:
-            data['result'] = json.dumps(data['result'])
+        # TODO: remove data['result'] stringfy
+        # if 'result' in data:
+        #     data['result'] = json.dumps(data['result'])
         return data
 
     def save(self, project, taskid, url, result):
@@ -61,7 +63,7 @@ class ResultDB(SplitTableMixin, BaseResultDB):
             {'taskid': taskid}, {"$set": self._stringify(obj)}, upsert=True
         )
 
-    def select(self, project, fields=None, offset=0, limit=0):
+    def select(self, project, fields=None, offset=0, limit=0, filter=None):
         if project not in self.projects:
             self._list_project()
         if project not in self.projects:
@@ -69,16 +71,16 @@ class ResultDB(SplitTableMixin, BaseResultDB):
         offset = offset or 0
         limit = limit or 0
         collection_name = self._collection_name(project)
-        for result in self.database[collection_name].find({}, fields, skip=offset, limit=limit):
+        for result in self.database[collection_name].find(filter or {}, fields, skip=offset, limit=limit):
             yield self._parse(result)
 
-    def count(self, project):
+    def count(self, project, filter=None):
         if project not in self.projects:
             self._list_project()
         if project not in self.projects:
             return
         collection_name = self._collection_name(project)
-        return self.database[collection_name].count()
+        return self.database[collection_name].find(filter or {}).count()
 
     def get(self, project, taskid, fields=None):
         if project not in self.projects:

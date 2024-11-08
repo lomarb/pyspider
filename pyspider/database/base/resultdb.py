@@ -26,10 +26,10 @@ class ResultDB(object):
     def save(self, project, taskid, url, result):
         raise NotImplementedError
 
-    def select(self, project, fields=None, offset=0, limit=None):
+    def select(self, project, fields=None, offset=0, limit=None, filter={}):
         raise NotImplementedError
 
-    def count(self, project):
+    def count(self, project, filter={}):
         raise NotImplementedError
 
     def get(self, project, taskid, fields=None):
